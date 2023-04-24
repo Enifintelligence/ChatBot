@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../assets/user-Info.css';
+import '../assets/user-info.css';
 import getCookie, {setCookie} from '../utils/getCookie';
 import { useNavigate } from 'react-router-dom';
 
