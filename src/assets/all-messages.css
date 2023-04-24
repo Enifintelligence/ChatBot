@@ -1,0 +1,50 @@
+.messages_accordion_box{
+    padding: 1rem ;
+    overflow-y: scroll;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-align: left;
+    gap: 0.5rem;
+    padding: 0 1rem;
+}
+.vector{
+    width: 0.25rem;
+}
+.widget_header{
+    padding: 1.8rem 2.25rem 1.2rem 0;
+    border-radius: 0;
+}
+.widget_header_images{
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    width: 99%;
+    align-items: center;
+    
+}
+
+.widget_image_element{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+.widget_image_element small{
+    color: #fff;
+}
+.widget_header_images p{
+
+    color: #fff;
+    background-color: #333233;
+    height: 1.6rem;
+    width: 1.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.vector-image{
+    width: 0.5rem;
+}

@@ -1,0 +1,126 @@
+.widget_message {
+  color: #585859;
+}
+.widget_header {
+  background-color: #1a1a1b;
+  padding: 2.42rem 0 0;
+}
+.widget_header_images {
+  display: flex;
+  margin: 0 auto;
+  width: 50%;
+  gap: 0.8rem;
+  justify-content: center;
+  padding-bottom: 1.4rem;
+}
+.vector {
+  padding-left: 2.32rem;
+}
+.widget_message_body {
+  padding: 1.5rem 0 0 0;
+  text-align: center;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 24.75rem;
+  
+}
+.chat-box {
+  /* height: 25.8rem; */
+}
+h2 {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.text p {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  max-width: 60%;
+}
+.message_box {
+  margin: 0rem 1.25rem 0.8rem 1.25rem;
+  padding-top:0.8rem ;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* border: 1px solid; */
+  align-items: center;
+  border-top: 1px solid #E6E5E8;
+
+}
+.message_box small {
+  padding-top: 0.9rem;
+  text-align: left;
+  font-size: 0.8rem;
+  display: flex;
+  width: 100%;
+}
+.message_input {
+  padding-top: 0.25rem;
+  outline: none;
+  border: none;
+}
+.message_icons_left {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: ; */
+}
+.icons {
+  display: flex;
+  gap: 0.25rem;
+}
+a {
+  color: inherit;
+}
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1a;
+  color: white;
+}
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  text-align: left;
+  gap: 0.5rem;
+  padding: 0 1rem;
+
+  /* align-items: end; */
+}
+.message {
+  padding: 1.225rem;
+  background: #f3f2f5;
+}
+.message-box {
+  max-width: 75%;
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+}
+.message-box img {
+  width: 2rem;
+    object-fit: cover;
+  position: relative;
+  z-index: 20;
+}
+.message-sent {
+}
+.message-received {
+  align-self: end;
+  width: max-content;
+  margin: 0.5rem 0;
+}
+.sent {
+  border-radius: 0px 12px 12px 12px;
+}
+.received {
+  background: #e1dee9;
+  border-radius: 12px 0px 12px 12px;
+}

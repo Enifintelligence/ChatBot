@@ -1,0 +1,30 @@
+.footer{
+    
+    background-color: white;
+    box-shadow: 0px 0px 25px rgba(139, 139, 139, 0.2);;
+    color: #8B8A8C;
+    position: fixed;
+    width: 24rem;
+    bottom: 0rem;
+    
+    border-radius: 0 0 12px 12px ;
+    box-shadow: 0px 0px 25px rgba(139, 139, 139, 0.2);
+}
+.footer_element_box{
+    padding: 1.5rem 4.675rem;
+    justify-content: center;
+    display: flex;
+    gap: 4.0625rem;
+
+}
+
+.element_box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:0.3125rem;
+}
+.element_box img{
+    width: 1.125rem;
+}

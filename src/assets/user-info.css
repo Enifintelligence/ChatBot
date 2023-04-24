@@ -1,0 +1,37 @@
+.popup {
+    position: absolute;
+    top: 30%;
+    /* translate: 0 -50%; */
+    width: 25rem;
+    height: 28.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(0.75rem);
+    font-family: poppins;
+    /* color: $color; */
+    overflow: hidden;
+    position: fixed;
+}
+.info_form{
+    max-width: 60%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem 1.5rem;
+    border-radius: 4px;
+}
+.info_form input{
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ddd;
+    box-shadow: none;
+
+}
+form button{
+    border-radius: 4px;
+    background-color: #1b1b1b;
+    color: white;
+}

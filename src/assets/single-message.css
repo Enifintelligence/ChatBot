@@ -1,0 +1,16 @@
+.widget_header{
+    padding:  1.1rem 0;
+}
+.widget_message_body{
+    margin: 0;
+    padding: 0;
+}
+.chat-box {
+    height: 32.6rem;
+  }
+  .message-box{
+    display: block;
+    font-size: 0.9rem;
+    line-height: 1.02rem;
+
+  }
