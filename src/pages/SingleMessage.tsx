@@ -10,6 +10,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const SingleMessage = () => {
+  
   const navigate = useNavigate()
   const [textMessage, setTextMessage] = useState("");
   const [messages, setMessages] = useState([
@@ -114,6 +115,7 @@ const scrollToBottom=()=>{
             <div className="message_icons_left">
               <textarea
                 className="message_input"
+                
                 value={textMessage}
                 onChange={(e: any) => setTextMessage(e.target.value)}
                 placeholder="Start a conversation"

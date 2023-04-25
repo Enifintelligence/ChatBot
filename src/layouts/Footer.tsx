@@ -9,7 +9,7 @@ const Footer = () => {
     <>
         <footer className="footer">
             <div className="footer_element_box">
-                <Link to='/' className="element_box">
+                <Link to='/asdfghjklkhdss' className="element_box">
                     <img src="/images/Home.png" alt="" />
                     <p>Home</p>
                 </Link>

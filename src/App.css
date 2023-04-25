@@ -1,7 +1,7 @@
 #root {
   /* max-height: 500px; */
   /* border-radius: 12px */
-  
+  background: black;
 }
 
 .logo {
@@ -39,9 +39,6 @@
 .read-the-docs {
   color: #888;
 }
-#widget_popup_button{
-  width: 1rem;
-  height: 1rem;
-  background: blue;
-}
+
+
 

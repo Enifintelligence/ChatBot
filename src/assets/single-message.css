@@ -1,16 +1,21 @@
 .widget_header{
     padding:  1.1rem 0;
+    border-radius: 15px 15px 0 0;
+  overflow: hidden
 }
 .widget_message_body{
     margin: 0;
     padding: 0;
 }
 .chat-box {
-    height: 32.6rem;
+    height: 31.6rem;
   }
-  .message-box{
+.message-box{
     display: block;
     font-size: 0.9rem;
     line-height: 1.02rem;
 
+  }
+  textarea{
+    resize: none;
   }

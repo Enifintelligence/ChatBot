@@ -2,11 +2,13 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  overflow: hidden;
   
-  
+  position: fixed;
+  /* right: 10%; */
+  bottom: 10%;
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
+  background: transparent;
+  /* border: blue 1px solid; */
   font-kerning: 0.05em;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,10 +16,11 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   letter-spacing: -0.02em;
-  width: max-content;
-  height: max-content;
-  
-  
+  min-width: 400px;
+  max-width: 400px;
+  min-height: 900px;
+  z-index: 1500;
+  top: 2rem;
 }
 
 a {
@@ -31,7 +34,7 @@ a:hover {
 
 body {
   margin: 0;
-  
+
   min-width: 320px;
   min-height: 100vh;
 }
@@ -53,8 +56,6 @@ button {
   transition: border-color 0.25s;
 }
 
-
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -68,21 +69,22 @@ button {
     cursor: pointer;
   }
 }
-.widget{
+.widget {
+  
+  max-height: 56.25rem;
+  background: white;
   max-width: 25rem;
-  height: 900px;
-  /* max-height: 800px; */
-  width: 25rem;
-  overflow: none;
+  min-width: 25rem;
+  
   border-radius: 15px;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: absolute;
-  right: 10%;
-  z-index: 1001;
-  display: hidden;
+  /* bottom: 5%; */
+  z-index: 1005;
+  
 }
-@media screen  and (max-width:420px) {
-  .widget{
+@media screen and (max-width: 420px) {
+  .widget {
     position: relative;
     right: 0;
   }

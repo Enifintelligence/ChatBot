@@ -35,81 +35,89 @@ const ChatHome = () => {
       dolor ut sequi minus iste? Quas?`,
     },
   ];
-const [openInfoModal , setOpenInfoModal] = useState(false)
+  const [widgetStatus, setWidgetStatus] = useState(false);
+
+  const [openInfoModal, setOpenInfoModal] = useState(false);
   return (
     <>
-      <div id="widget_home" className="widget">
-        <header className="header">
-          <div className="logo_header_container">
-            <div className="logo_box">
-              <img src="/images/Logo.png" alt="" />
-              <div className="logo_text">
-                
+      {  (
+        <div id="widget_home" className="widget">
+          <header className="header">
+            <div className="logo_header_container">
+              <div className="logo_box">
+                <img src="/images/Logo.png" alt="" />
+                <div className="logo_text">
+                  <p className="">enif</p>
+                </div>
+              </div>
+              <div className="header_images">
+                <div className="header_image_box">
+                  <img
+                    className="header_image"
+                    src="/images/Image-1.png"
+                    alt=""
+                  />
+                  <small>Funke</small>
+                </div>
+                <div className="header_image_box">
+                  <img
+                    className="header_image"
+                    src="/images/Image-2.png"
+                    alt=""
+                  />
 
-                <p className="">enif</p>
+                  <small>Abdul</small>
+                </div>
+                <div className="header_image_box">
+                  <img
+                    className="header_image"
+                    src="/images/Image-3.png"
+                    alt=""
+                  />
+                  <small>John</small>
+                </div>
               </div>
             </div>
-            <div className="header_images">
-              <div className="header_image_box">
-                <img
-                  className="header_image"
-                  src="/images/Image-1.png"
-                  alt=""
-                />
-                <small>Funke</small>
+            <div className="header_text">
+              <h2>Hello there</h2>
+              <p>How can we help ?</p>
+            </div>
+          </header>
+          <div className="widget_home_body">
+            <div
+              className="live_chat_signal"
+              onClick={() => setOpenInfoModal(true)}
+            >
+              <div className="live_chat_text">
+                <p>Live chat</p>
+                <small>We typically reply in few minutes...</small>
               </div>
-              <div className="header_image_box">
-                <img
-                  className="header_image"
-                  src="/images/Image-2.png"
-                  alt=""
-                />
-
-                <small>Abdul</small>
-              </div>
-              <div className="header_image_box">
-                <img
-                  className="header_image"
-                  src="/images/Image-3.png"
-                  alt=""
-                />
-                <small>John</small>
+              <img src="/images/Send.png" className="live_chat_image" alt="" />
+            </div>
+            <div className="live_chat_faq">
+              <form action="">
+                <div className="search_box">
+                  <input type="search" name="" id="" placeholder="search" />
+                </div>
+              </form>
+              <div className="faqs">
+                {accordionData.map(({ title, content }) => (
+                  <Accordion
+                    key={title}
+                    imageShow={false}
+                    image={""}
+                    title={title}
+                    content={content}
+                  />
+                ))}
               </div>
             </div>
           </div>
-          <div className="header_text">
-            <h2>Hello there</h2>
-            <p>How can we help ?</p>
-          </div>
-        </header>
-        <div className="widget_home_body">
-          <div className="live_chat_signal" onClick={()=>setOpenInfoModal(true)}>
-            <div className="live_chat_text" >
-              <p>Live chat</p>
-              <small>We typically reply in few minutes...</small>
-            </div>
-            <img src="/images/Send.png" className="live_chat_image" alt="" />
-          </div>
-          <div className="live_chat_faq">
-            <form action="">
-              <div className="search_box">
-                <input type="search" name="" id="" placeholder="search" />
-              </div>
-            </form>
-            <div className="faqs">
-             
-              {accordionData.map(({ title, content }) => (
-                
-
-                    <Accordion key={title} imageShow={false} image={''}  title={title} content={content} />
-              
-              ))}
-            </div>
-          </div>
+          {openInfoModal && <UserInfo closeModal={setOpenInfoModal} />}
+          <Footer />
         </div>
-        {openInfoModal && <UserInfo closeModal={setOpenInfoModal}/>}
-              <Footer/>
-      </div>
+      )}
+      
     </>
   );
 };

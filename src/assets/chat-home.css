@@ -173,3 +173,16 @@ color: #4c4c4d;
 padding: 0.5rem .8rem ;
 font-size: small;
 }
+.popup_button{
+  width: 100%;
+  height: 100%;
+  background: blue;
+ 
+  border-radius: 50%;
+}
+.widget_popup{
+  width: 4rem;
+  height: 4rem;
+  display: fixed;
+  bottom: 10%;
+}

@@ -14,7 +14,7 @@ interface route {
   }
 export const routes:route[]= [
     {
-        path:'/',
+        path:'/:businessId',
         element:<ChatHome/>,
         
     },

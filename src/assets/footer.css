@@ -4,11 +4,11 @@
     box-shadow: 0px 0px 25px rgba(139, 139, 139, 0.2);;
     color: #8B8A8C;
     position: fixed;
-    width: 24rem;
+    width: 25rem;
     bottom: 0rem;
     
     border-radius: 0 0 12px 12px ;
-    box-shadow: 0px 0px 25px rgba(139, 139, 139, 0.2);
+    box-shadow: 0px 0px 12px rgba(139, 139, 139, 0.2);
 }
 .footer_element_box{
     padding: 1.5rem 4.675rem;
