@@ -2,10 +2,15 @@
   height: max-content;
   padding-top: 0.5rem;
 }
+.widget_header{
+  padding:  1.1rem 0;
+    border-radius: 15px 15px 0 0;
+  overflow: hidden;
+}
 .message-box {
 }
 .review_area {
-  padding: 6.25rem 3.55625rem 3.55625rem;
+  padding: 3.25rem 3.55625rem 3.55625rem;
   display: flex;
   flex-direction: column;
   align-items: center;

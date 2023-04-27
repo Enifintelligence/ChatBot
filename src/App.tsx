@@ -22,7 +22,7 @@ interface route {
   path: string;
   element: any;
 }
-function App(children:PropsWithChildren) {
+function App({ children }: PropsWithChildren) {
   const [widgetStatus, setWidgetStatus] = useState(false);
 
   const getRoutes = (allRoutes: route[]) => {
@@ -34,31 +34,11 @@ function App(children:PropsWithChildren) {
   };
 
   return (
-    <iframe allowFullScreen>
-      {
-        <div className="App">
-          <>
-            {/* <Routes>
-              <Route path="/:businessId" element=<ChatHome />></Route>
-              <Route path="/popup" element=<ChatMessage />></Route>
-              <Route path="/messages:/id" element=<SingleMessage />></Route>
-              <Route path="/messages" element=<AllMessages />></Route>
-              <Route path="/review" element=<Review />></Route>
-            </Routes> */}
-           {children}
-          </>
-        </div>
-      }
+    <>
+      { <div className="App">{children}</div>}
 
-      <div className="widget_popup">
-        {!widgetStatus && (
-          <div
-            onClick={() => setWidgetStatus(true)}
-            className="popup_button"
-          ></div>
-        )}
-      </div>
-    </iframe>
+      
+    </>
   );
 }
 

@@ -1,8 +1,8 @@
 import "../assets/reset_and_normalize.css";
 import "../assets/chat-home.css";
 import "../assets/chat-message.css";
-import "../assets/single-message.css";
 import "../assets/all-messages.css";
+import "../assets/single-message.css";
 
 import "../assets/footer.css";
 import Footer from "../layouts/Footer";
@@ -10,7 +10,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const SingleMessage = () => {
-  
+
   const navigate = useNavigate()
   const [textMessage, setTextMessage] = useState("");
   const [messages, setMessages] = useState([
@@ -122,8 +122,9 @@ const scrollToBottom=()=>{
               />
               <div className="icons">
                 <p>Aa</p>
-                <p>x</p>
-                <p>x</p>
+               <img src="/images/Image-vector.png" alt="" />
+               <img src="/images/Gif.png" alt="" />
+                
               </div>
             </div>
             <div className="button">

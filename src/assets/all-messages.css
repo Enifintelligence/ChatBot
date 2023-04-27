@@ -8,7 +8,10 @@
     overflow-x: hidden;
     text-align: left;
     gap: 0.5rem;
-    padding: 0 1rem;
+    /* padding: 0 1rem; */
+}
+.messages_accordion_box::-webkit-scrollbar{
+    display: none;
 }
 .vector{
     width: 0.25rem;
@@ -16,6 +19,10 @@
 .widget_header{
     padding: 1.8rem 2.25rem 1.2rem 0;
     border-radius: 0;
+    border-radius: 15px 15px 0 0;
+}
+.messages_header{
+  overflow: hidden;
 }
 .widget_header_images{
     justify-content: space-between;
@@ -47,4 +54,12 @@
 }
 .vector-image{
     width: 0.5rem;
+}
+
+
+.all_messages_box{
+    height: 38rem;
+}
+.all_messages_box::-webkit-scrollbar{
+    display: none;
 }

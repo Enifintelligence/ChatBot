@@ -133,6 +133,8 @@ const AllMessages = () => {
             </div>
           </div>
         </div>
+        <div className="all_messages_box">
+
         <NavLink to='/review' className="messages_accordion_box">
           {accordionData.map(({ title, content, path, agentName, time }) => (
             <AgentAccordion
@@ -145,6 +147,7 @@ const AllMessages = () => {
             />
           ))}
         </NavLink>
+        </div>
         <Footer />
       </div>
     </>

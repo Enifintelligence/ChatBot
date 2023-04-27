@@ -1,7 +1,5 @@
 #root {
-  /* max-height: 500px; */
-  /* border-radius: 12px */
-  background: black;
+ 
 }
 
 .logo {
@@ -39,6 +37,9 @@
 .read-the-docs {
   color: #888;
 }
-
+.App{
+  /* max-height: 900px; */
+  /* overflow-y: hidden; */
+}
 
 

@@ -77,12 +77,29 @@ button {
   min-width: 25rem;
   
   border-radius: 15px;
-  /* overflow: hidden; */
+  overflow: scroll;
   position: absolute;
   /* bottom: 5%; */
   z-index: 1005;
   
 }
+.popup_button{
+  width: 100%;
+  height: 100%;
+  background: blue;
+ 
+  border-radius: 50%;
+}
+.widget_popup{
+  width: 4rem;
+  height: 4rem;
+  display: fixed;
+  bottom: 10%;
+}
+.widget::-webkit-scrollbar{
+  display: none;
+}
+
 @media screen and (max-width: 420px) {
   .widget {
     position: relative;

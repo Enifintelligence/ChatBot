@@ -94,24 +94,7 @@ const SingleMessage = () => {
               );
             })}
           </div>
-          {/* <div className="message_box">
-            <div className="message_icons_left">
-              <textarea
-                className="message_input"
-                value={textMessage}
-                onChange={(e: any) => setTextMessage(e.target.value)}
-                placeholder="Start a conversation"
-              />
-              <div className="icons">
-                <p>Aa</p>
-                <p>x</p>
-                <p>x</p>
-              </div>
-            </div>
-            <div className="button">
-              <button onClick={() => sendMessage()}>Send</button>
-            </div>
-          </div> */}
+          
           <div className="review_area">
             <div className="img_box">
               <img src="/images/Logo.png" alt="" />
@@ -127,12 +110,15 @@ const SingleMessage = () => {
               </div>
               </div>
             <p className="area_text">Your conversation has ended</p>
+              <NavLink to='/qwertyuiop'>
             <div className="live_chat_signal">
+
             <div className="live_chat_text">
               Send us a message
             </div>
             <img src="/images/Send.png" className="live_chat_image" alt="" />
           </div>
+              </NavLink>
           </div>
         </div>
         <Footer />
