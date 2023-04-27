@@ -24,7 +24,7 @@ export const routes:route[]= [
         
     },
     {
-        path:'/message/:id',
+        path:'/message/:id/:customerId',
         element:<SingleMessage/>,
         
     },

@@ -6,69 +6,65 @@ import "../assets/all-messages.css";
 
 import "../assets/footer.css";
 import Footer from "../layouts/Footer";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Axios from "axios";
 
 const SingleMessage = () => {
-  
-  const navigate = useNavigate()
-  const [textMessage, setTextMessage] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      fromUserId: 1,
-      toUserId: 0,
-      text: "I am a customer and I have a question",
-    },
-    {
-      fromUserId: 0,
-      toUserId: 1,
-      text: "Hey there!Tell me your name and your registered email address? This will assist me to confirm your issues on your account.Thanks",
-    },
-    {
-      fromUserId: 0,
-      toUserId: 1,
-      text: "Please are you still with me?",
-    },
-    {
-      fromUserId: 1,
-      toUserId: 0,
-      text: "            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus est dolorum expedita atque, optio quia ducimus quisquam minima accusantium quas.",
-    },
-    {
-      fromUserId: 0,
-      toUserId: 1,
-      text: "Thank you!",
-    },
-    {
-      fromUserId: 0,
-      toUserId: 1,
-      text: "You have question , so what would you like to know ?",
-    },
-  ]);
-  const agentUser = {
-    id: 0,
-    name: "Alon Smith",
-    path: "Image-3.jpeg",
-    designation: "Software Developer",
+  let { id, customerId } = useParams();
+  const [message, setMessage] = useState<any>([]);
+  const fetchMessages = async () => {
+    try {
+      const response = await Axios.get(
+        "https://chat-enif.oluwaseyialaka.repl.co/chat/get-messages/" +
+          id +
+          "/" +
+          customerId +
+          "/"
+      );
+      setMessage(response.data.messages);
+    } catch (error: any) {}
   };
-const scrollToBottom=()=>{
-  setTimeout(() => {
-    const element: any = document.querySelector('.chat-box');
-    element.behavior = 'smooth';
-    element.scrollTop = element.scrollHeight;
-});
-}
-  const sendMessage = () => {
-    if (textMessage.trim()) {
-      const newMessage = {
-        fromUserId: 1,
-        toUserId: 0,
-        text: textMessage,
-      };
-      setMessages([...messages, newMessage]);
-      setTextMessage("");
-      scrollToBottom()
-    }
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+  const navigate = useNavigate();
+  const [textMessage, setTextMessage] = useState("");
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      const element: any = document.querySelector(".chat-box");
+      element.behavior = "smooth";
+      element.scrollTop = element.scrollHeight;
+    });
+  };
+  const sendMessage = async () => {
+    setTextMessage("");
+    try {
+      const response = await Axios.post(
+        "https://chat-enif.oluwaseyialaka.repl.co/chat/send-message/" +
+          id +
+          "/" +
+          customerId,
+        {
+          sender: "customer",
+          content: textMessage,
+        }
+      );
+      if (response.data.success) {
+        setMessage((previousMessage: any) => {
+          return [
+            ...previousMessage,
+            {
+              content: textMessage.trim(),
+              sender: "customer",
+              sent_time: new Date(),
+            },
+          ];
+        });
+        scrollToBottom();
+      }
+    } catch (error: any) {}
   };
 
   return (
@@ -77,7 +73,7 @@ const scrollToBottom=()=>{
         <div className="widget_header">
           <div className="widget_header_images">
             <div className="widget_image_element">
-              <div onClick={()=> navigate(-1)} className="vector">
+              <div onClick={() => navigate(-1)} className="vector">
                 <img src="/images/Vector.png" className="vector-image" alt="" />
               </div>
               <div className="header_image_box">
@@ -94,18 +90,21 @@ const scrollToBottom=()=>{
         </div>
         <div className="widget_message_body">
           <div className="chat-box">
-            {messages.map((message, index) => {
+            {message.map((message: any, index: number) => {
+              // return <></>
               const messageBoxClass =
-                message.fromUserId === 0 ? "message-sent" : "message-received";
+                message.sender === "customer"
+                  ? "message-received"
+                  : "message-sent";
               const messageClass =
-                message.fromUserId === 0 ? "sent" : "received";
+                message.sender === "agent" ? "sent" : "received";
               return (
                 <div key={index} className={`message-box ${messageBoxClass}`}>
                   {message.fromUserId === 0 && (
                     <img className="" src="images/Image-1.png" alt="" />
                   )}
                   <div key={index} className={`message ${messageClass}`}>
-                    {message.text}
+                    {message.content}
                   </div>
                 </div>
               );
@@ -115,7 +114,6 @@ const scrollToBottom=()=>{
             <div className="message_icons_left">
               <textarea
                 className="message_input"
-                
                 value={textMessage}
                 onChange={(e: any) => setTextMessage(e.target.value)}
                 placeholder="Start a conversation"
