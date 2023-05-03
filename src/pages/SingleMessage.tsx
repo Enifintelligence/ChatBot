@@ -3,7 +3,7 @@ import "../assets/chat-home.css";
 import "../assets/chat-message.css";
 import "../assets/single-message.css";
 import "../assets/all-messages.css";
-
+import io from "socket.io-client";
 import "../assets/footer.css";
 import Footer from "../layouts/Footer";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import Axios from "axios";
 const SingleMessage = () => {
   let { id, customerId } = useParams();
   const [message, setMessage] = useState<any>([]);
+  const [socket, setSocket] = useState<any>(null);
   const fetchMessages = async () => {
     try {
       const response = await Axios.get(
@@ -40,6 +41,7 @@ const SingleMessage = () => {
   };
   const sendMessage = async () => {
     setTextMessage("");
+    emitMessage(customerId as string, id as string);
     try {
       const response = await Axios.post(
         "https://chat-enif.oluwaseyialaka.repl.co/chat/send-message/" +
@@ -66,6 +68,54 @@ const SingleMessage = () => {
       }
     } catch (error: any) {}
   };
+  const emitMessage = (customerId: string, businessId: string) => {
+    console.log(customerId, businessId);
+    socket.emit("message", {
+      message: textMessage,
+      customerIdentifier: customerId,
+    });
+  };
+
+  useEffect(() => {
+    const newSocket = io("https://api.enif.ai", {
+      extraHeaders: {
+        Authorization: `${id}--${customerId}`,
+      },
+    });
+    // Add this code to handle the 'message' event
+    newSocket.on("message", (data) => {
+      let newMessage = {
+        content: data.message,
+        sender: "agent",
+        sent_time: new Date(),
+      };
+      console.log({ data });
+      setMessage((previousMessages: any) => {
+        return [...previousMessages, newMessage];
+      });
+      scrollToBottom();
+      // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+
+      console.log("Received message from server: ", data);
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to socket server");
+      // newSocket.emit("hello", "Hello server!");
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from socket server");
+    });
+
+    // Save the socket instance to the state variable
+    setSocket(newSocket);
+
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [id, customerId]);
 
   return (
     <>
@@ -121,7 +171,7 @@ const SingleMessage = () => {
               <div className="icons">
                 <p>Aa</p>
                 <p>x</p>
-                <p>x</p>
+                <p>xs</p>
               </div>
             </div>
             <div className="button">
