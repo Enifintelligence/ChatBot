@@ -37,7 +37,7 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
   return (
     <>
       <div className="popup">
-        <form className="info_form" onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label htmlFor="customer_name">Name:</label>
             <input
@@ -45,10 +45,7 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
               id="customer_name"
               {...register("customer_name", { required: true })}
             />
-            <span className="error">
-
             {errors.customer_name && <p>Customer name is required</p>}
-            </span>
           </div>
           <div>
             <label htmlFor="phone_number">Phone number:</label>
@@ -57,10 +54,7 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
               id="phone_number"
               {...register("phone_number", { required: true })}
             />
-            <span className="error">
-
             {errors.customer_email && <p>customer phone_number is required</p>}
-            </span>
           </div>
           <div>
             <label htmlFor="customer_email">Email:</label>
@@ -72,8 +66,6 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
                 pattern: /^\S+@\S+$/i,
               })}
             />
-            <span className="error">
-
             {errors.customer_email &&
               errors.customer_email.type === "required" && (
                 <p>Email is required</p>
@@ -82,7 +74,6 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
               errors.customer_email.type === "pattern" && (
                 <p>Email address is invalid</p>
               )}
-            </span>
           </div>
 
           <button type="submit">Submit</button>
