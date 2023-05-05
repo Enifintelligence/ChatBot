@@ -58,7 +58,7 @@
 
 
 .all_messages_box{
-    height: 38rem;
+    height: 31rem;
 }
 .all_messages_box::-webkit-scrollbar{
     display: none;

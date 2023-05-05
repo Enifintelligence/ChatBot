@@ -1,6 +1,7 @@
 .chat-box {
   height: max-content;
   padding-top: 0.5rem;
+  font-size: 0.95rem;
 }
 .widget_header{
   padding:  1.1rem 0;
@@ -10,7 +11,7 @@
 .message-box {
 }
 .review_area {
-  padding: 3.25rem 3.55625rem 3.55625rem;
+  padding: 1rem 3.55625rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;

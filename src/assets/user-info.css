@@ -5,7 +5,7 @@
     width: 25rem;
     height: 28.78rem;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(0.75rem);
@@ -13,15 +13,22 @@
     /* color: $color; */
     overflow: hidden;
     position: fixed;
+    border-radius: 12px;
 }
 .info_form{
     max-width: 60%;
     background: white;
     display: flex;
+    height: 60%;
+    margin-top: 2rem;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 2rem 1.5rem;
+    gap: 0.25rem;
+    color: #1b1b1b;
+    padding: 1rem 1.5rem;
     border-radius: 4px;
+}
+.info_form div{
+    margin-bottom:1rem ;
 }
 .info_form input{
     border: none;
@@ -29,6 +36,10 @@
     border-bottom: 1px solid #ddd;
     box-shadow: none;
 
+}
+.error{
+    color: red;
+    font-size: 0.8rem;
 }
 form button{
     border-radius: 4px;

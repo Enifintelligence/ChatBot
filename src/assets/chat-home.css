@@ -5,8 +5,8 @@
 }
 .header {
   background-color: #1a1a1a;
-  padding-top: 2.6rem;
-  padding-bottom: 2.6rem;
+  padding-top: 1.8rem;
+  padding-bottom: 1.8rem;
   padding-left: 1.8rem;
   padding-right: 1.8rem;
 }
@@ -111,10 +111,12 @@
 }
 .live_chat_faq {
   margin-top: 1.25rem;
-  margin-bottom: 5.25rem;
+  margin-bottom: 3.25rem;
   border-radius: 12px;
+  /* max-height: 13.25rem; */
   padding: 0.625rem 0;
   background-color: #f3f2f5;
+
 }
 input {
   border: none;
@@ -151,17 +153,17 @@ input::placeholder{
 }
 .faq_header_box {
   
-  padding-top: 0.813rem;
+  padding-top: 0.613rem;
   color: #4c4c4d;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   border-bottom: 1px solid #dcdbde;
+  padding-bottom: 0.613rem;
 }
 .live_chat_faq p {
   padding-left: 2.0625rem;
-  padding-bottom: 0.813rem;
 }
 .live_chat_faq span{
   padding-right: 2.0625rem;
