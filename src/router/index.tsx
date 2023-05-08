@@ -6,7 +6,8 @@ const SingleMessage = lazy(()=>import('../pages/SingleMessage'));
 const ChatMessage = lazy(()=>import('../pages/ChatMessage'));
 const AllMessages= lazy(()=>import('../pages/Messages'));
 const Review= lazy(()=>import('../pages/Review'));
-
+const Faq= lazy(()=>import('../pages/Faq'));
+const Help = lazy(()=>import('../pages/Help') )
 interface route {
     path:string;
     element:JSX.Element;
@@ -29,6 +30,11 @@ export const routes:route[]= [
         
     },
     {
+        path:'/faqs',
+        element:<Faq/>,
+        
+    },
+    {
         path:'/messages',
         element:<AllMessages/>,
         
@@ -36,6 +42,11 @@ export const routes:route[]= [
     {
         path:'/review',
         element:<Review/>,
+        
+    },
+    {
+        path:'/help',
+        element:<Help/>,
         
     },
 ]

@@ -20,7 +20,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, content,imageShow,image,fu
         {
           imageShow && <img src={image} alt="" />
         }
-        <p className={`${fullPage?'faq_title':''} `}>{title}</p>
+        <p className={` faq_title`}>{title}</p>
         { imageShow && <></>}
         </div>
         <span className='accordion_toggle'>{isActive ? '-' : '+'}</span>

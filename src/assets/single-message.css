@@ -1,30 +1,58 @@
-.widget_header{
-    padding:  1.1rem 0;
-    border-radius: 15px 15px 0 0;
+.widget_header {
+  padding: 1.1rem 0;
+  border-radius: 15px 15px 0 0;
   overflow: hidden;
-
 }
-.widget_message_body{
-    margin: 0;
-    padding: 0;
+.widget_message_body {
+  margin: 0;
+  padding: 0;
 }
-.icons img{
+.icons img {
   width: 0.625rem;
   height: 0.625rem;
 }
 .chat-box {
-    height: 25.6rem;
-    
-  }
-  .chat-box::-webkit-scrollbar{
-    display:none;
-  }
-.message-box{
-    display: block;
-    font-size: 0.9rem;
-    line-height: 1.02rem;
-
-  }
-  textarea{
-    resize: none;
-  }
+  height: 25.6rem;
+}
+.chat-box::-webkit-scrollbar {
+  display: none;
+}
+.message-box {
+  display: block;
+  font-size: 0.9rem;
+  line-height: 1.02rem;
+}
+textarea {
+  resize: none;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+form div {
+  background-color: white;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+  max-width: 75%;
+  padding: 1.98rem 0rem 2rem 1.8rem;
+  /* border-top: 1.5px solid #C8C8C8; */
+  border-radius: 8px;
+  display: flex;
+  /* justify-items: start; */
+  flex-direction: column;
+  /* padding: 0 ; */
+}
+form label {
+  color: #1a1a1b;
+  font-size: 13px;
+  line-height: 120%;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+form div input {
+  max-width: 75%;
+  border: 1px solid #a4a4a6;
+  border-radius: 6px;
+  /* margin: 0 auto; */
+}

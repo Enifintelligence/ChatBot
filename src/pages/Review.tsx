@@ -10,10 +10,8 @@ import Footer from "../layouts/Footer";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-
-
 const SingleMessage = () => {
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   const [textMessage, setTextMessage] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -54,10 +52,10 @@ const SingleMessage = () => {
   return (
     <>
       <div className="widget_message widget">
-      <div className="widget_header">
+        <div className="widget_header">
           <div className="widget_header_images">
             <div className="widget_image_element">
-              <div onClick={()=>navigate(-1)}  className="vector">
+              <div onClick={() => navigate(-1)} className="vector">
                 <img src="/images/Vector.png" className="vector-image" alt="" />
               </div>
               <div className="header_image_box">
@@ -69,9 +67,8 @@ const SingleMessage = () => {
                 <small>Funke</small>
               </div>
             </div>
-            <NavLink to='/'>
-
-            <button>x</button>
+            <NavLink to="/">
+              <button>x</button>
             </NavLink>
           </div>
         </div>
@@ -94,7 +91,7 @@ const SingleMessage = () => {
               );
             })}
           </div>
-          
+
           <div className="review_area">
             <div className="img_box">
               <img src="/images/Logo.png" alt="" />
@@ -108,17 +105,18 @@ const SingleMessage = () => {
                 <img src="/images/Emoji_grinning.png" alt="" />
                 <img src="/images/Emoji_pouting.png" alt="" />
               </div>
-              </div>
-            <p className="area_text">Your conversation has ended</p>
-              <NavLink to='/qwertyuiop'>
-            <div className="live_chat_signal">
-
-            <div className="live_chat_text">
-              Send us a message
             </div>
-            <img src="/images/Send.png" className="live_chat_image" alt="" />
-          </div>
-              </NavLink>
+            <p className="area_text">Your conversation has ended</p>
+            <NavLink to="/qwertyuiop">
+              <div className="live_chat_signal">
+                <div className="live_chat_text">Send us a message</div>
+                <img
+                  src="/images/Send.png"
+                  className="live_chat_image"
+                  alt=""
+                />
+              </div>
+            </NavLink>
           </div>
         </div>
         <Footer />

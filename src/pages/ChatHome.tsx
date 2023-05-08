@@ -108,6 +108,7 @@ const ChatHome = () => {
                     image={""}
                     title={title}
                     content={content}
+                    fullPage={false}
                   />
                 ))}
               </div>
