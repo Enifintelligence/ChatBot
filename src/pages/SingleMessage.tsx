@@ -68,8 +68,8 @@ const SingleMessage = () => {
   };
 
   useEffect(() => {
-    const newSocket = io("http://127.0.0.1:3009/", {
-      // const newSocket = io("https://api.enif.ai", {
+    // const newSocket = io("http://127.0.0.1:3009/", {
+    const newSocket = io("https://api.enif.ai", {
       extraHeaders: {
         Authorization: `${id}--${customerId}`,
       },
