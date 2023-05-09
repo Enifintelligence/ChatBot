@@ -3,6 +3,7 @@ const apiUrl =
   //   import.meta.env.VITE_API_BASE_URLX ||
   // || "https://jarvis.enif.ai/";
   "http://localhost:3009/chat/";
+//   "https://api.enif.ai/chat/";
 console.log({ apiUrl });
 
 const instance = axios.create({

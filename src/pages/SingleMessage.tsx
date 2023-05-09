@@ -10,6 +10,7 @@ import Footer from "../layouts/Footer";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Axios from "../api";
+import axios from "axios";
 
 const SingleMessage = () => {
   let { id, customerId } = useParams();
@@ -38,7 +39,8 @@ const SingleMessage = () => {
     setTextMessage("");
     emitMessage(customerId as string, id as string);
     try {
-      const response = await Axios.post(`startChat/` + id + "/" + customerId, {
+      const response = await Axios.post(`send-chat/` + id + "/" + customerId, {
+        // const response = await Axios.post(`sendChat/` + id + "/" + customerId, {
         sender: "customer",
         content: textMessage,
       });
@@ -129,22 +131,41 @@ const SingleMessage = () => {
             <button>x</button>
           </div>
         </div>
-        
+
         <div className="widget_message_body">
           <div className="chat-box">
             <div className="">
               <form className="flex-col flex gap-4 mt-8 ">
                 <div className="shadow-md bg-white">
-                  <label htmlFor="Full name" className="">Full name</label>
-                  <input type="text" placeholder="Enter your name" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+                  <label htmlFor="Full name" className="">
+                    Full name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your name"
+                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                  />
                 </div>
                 <div className="shadow-md bg-white">
-                  <label htmlFor="Email" className="">Email</label>
-                  <input type="email" required placeholder="Enter your name" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+                  <label htmlFor="Email" className="">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="Enter your name"
+                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                  />
                 </div>
                 <div className="shadow-md bg-white">
-                  <label htmlFor="Phone number" className="">Phone number</label>
-                  <input type="text" placeholder="Enter your number" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+                  <label htmlFor="Phone number" className="">
+                    Phone number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter your number"
+                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                  />
                 </div>
               </form>
             </div>
