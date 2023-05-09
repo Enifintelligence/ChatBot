@@ -13,43 +13,40 @@ interface route {
     element:JSX.Element;
    
   }
-export const routes:route[]= [
-    {
-        path:'/:businessId',
-        element:<ChatHome/>,
-        
-    },
-    {
-        path:'/popup',
-        element:<ChatMessage/>,
-        
-    },
-    {
-        path:'/message/:id/:customerId',
-        element:<SingleMessage/>,
-        
-    },
-    {
-        path:'/faqs',
-        element:<Faq/>,
-        
-    },
-    {
-        path:'/messages',
-        element:<AllMessages/>,
-        
-    },
-    {
-        path:'/review',
-        element:<Review/>,
-        
-    },
-    {
-        path:'/help',
-        element:<Help/>,
-        
-    },
-]
+export const routes: route[] = [
+  {
+    path: "/:businessId",
+    element: <ChatHome />,
+  },
+  {
+    path: "/popup",
+    element: <ChatMessage />,
+  },
+  {
+    path: "/message/:id",
+    element: <SingleMessage />,
+  },
+  {
+    path: "/message/:id/:customerId",
+    element: <SingleMessage />,
+  },
+  {
+    path: "/faqs",
+    element: <Faq />,
+  },
+  {
+    path: "/messages",
+    element: <AllMessages />,
+  },
+  {
+    path: "/review",
+    element: <Review />,
+  },
+  {
+    path: "/help",
+    element: <Help />,
+  },
+];
 
 
 const router=  createBrowserRouter(routes)

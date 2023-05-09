@@ -21,7 +21,7 @@ const SingleMessage = () => {
     formState: { errors },
   } = useForm();
 
-  let { businessId } = useParams();
+  let { id: businessId } = useParams();
 
   let { id, customerId } = useParams();
   const [message, setMessage] = useState<any>([]);
@@ -33,8 +33,8 @@ const SingleMessage = () => {
     } catch (error: any) {}
   };
   useEffect(() => {
-    fetchMessages();
-  }, []);
+    customerId && fetchMessages();
+  }, [customerId]);
   const navigate = useNavigate();
   const [textMessage, setTextMessage] = useState("");
 
@@ -130,13 +130,23 @@ const SingleMessage = () => {
       business_id: businessId,
     };
     try {
-      const response = await Axios.post(
-        "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
-        newConversation
+      let response = await Axios.post(
+        `/start-conversation/${businessId}`,
+        data
       );
-      let { business_id, chat_identifier } = response.data;
+
+      let { business_id, chat_identifier } = response?.data?.data;
+      // console.log(business_id, chat_identifier);
       navigate("/message/" + business_id + "/" + chat_identifier);
     } catch (error: any) {}
+    // try {
+    //   const response = await Axios.post(
+    //     "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
+    //     newConversation
+    //   );
+    //   let { business_id, chat_identifier } = response.data;
+    //   navigate("/message/" + business_id + "/" + chat_identifier);
+    // } catch (error: any) {}
   };
   return (
     <>
@@ -162,89 +172,91 @@ const SingleMessage = () => {
 
         <div className="widget_message_body">
           <div className="chat-box">
-            <div className="">
-              <form className="" onSubmit={handleSubmit(onSubmit)}>
-                <div className="display input_box">
-                  <label htmlFor="Full name" className="">
-                    Full name
-                  </label>
-                  <div className={`input_border `}>
-                    <input
-                      type="text"
-                      placeholder="Enter your name"
-                      className="pt-[1.98rem] bg-red-300 pb-[2rem] "
-                      {...register("customer_name", { required: true })}
-                    />
+            {!customerId && (
+              <div className="">
+                <form className="" onSubmit={handleSubmit(onSubmit)}>
+                  <div className="display input_box">
+                    <label htmlFor="Full name" className="">
+                      Full name
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="text"
+                        placeholder="Enter your name"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] "
+                        {...register("name", { required: true })}
+                      />
 
-                    <img
-                      onClick={() => handleFieldDisplay(1)}
-                      className="check_img"
-                      src="/images/Shape.png"
-                      alt=""
-                    />
-                    {errors.customer_name && <p>Customer name is required</p>}
+                      <img
+                        onClick={() => handleFieldDisplay(1)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                      {errors.customer_name && <p>Customer name is required</p>}
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`input_box ${
-                    showElements.includes(1) ? "display" : ""
-                  }`}
-                >
-                  <label htmlFor="Email" className="">
-                    Email
-                  </label>
-                  <div className={`input_border `}>
-                    <input
-                      type="email"
-                      required
-                      placeholder="Enter your Email"
-                      className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                      {...register("customer_email", {
-                        required: true,
-                        pattern: /^\S+@\S+$/i,
-                      })}
-                    />
-                    <img
-                      onClick={() => handleFieldDisplay(2)}
-                      className="check_img"
-                      src="/images/Shape.png"
-                      alt=""
-                    />
-                    {errors.customer_email &&
-                      errors.customer_email.type === "required" && (
-                        <p>Email is required</p>
-                      )}
-                    {errors.customer_email &&
-                      errors.customer_email.type === "pattern" && (
-                        <p>Email address is invalid</p>
-                      )}
+                  <div
+                    className={`input_box ${
+                      showElements.includes(1) ? "display" : ""
+                    }`}
+                  >
+                    <label htmlFor="Email" className="">
+                      Email
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="email"
+                        required
+                        placeholder="Enter your Email"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                        {...register("customer_email", {
+                          required: true,
+                          pattern: /^\S+@\S+$/i,
+                        })}
+                      />
+                      <img
+                        onClick={() => handleFieldDisplay(2)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                      {errors.customer_email &&
+                        errors.customer_email.type === "required" && (
+                          <p>Email is required</p>
+                        )}
+                      {errors.customer_email &&
+                        errors.customer_email.type === "pattern" && (
+                          <p>Email address is invalid</p>
+                        )}
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`input_box ${
-                    showElements.includes(2) ? "display" : ""
-                  }`}
-                >
-                  <label htmlFor="Phone number" className="">
-                    Phone number
-                  </label>
-                  <div className={`input_border `}>
-                    <input
-                      type="text"
-                      placeholder="Enter your number"
-                      className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                      {...register("phone_number", { required: true })}
-                    />
-                    <img
-                      onClick={handleSubmit(onSubmit)}
-                      className="check_img"
-                      src="/images/Shape.png"
-                      alt=""
-                    />
+                  <div
+                    className={`input_box ${
+                      showElements.includes(2) ? "display" : ""
+                    }`}
+                  >
+                    <label htmlFor="Phone number" className="">
+                      Phone number
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="text"
+                        placeholder="Enter your number"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                        {...register("phone_number", { required: true })}
+                      />
+                      <img
+                        onClick={handleSubmit(onSubmit)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                    </div>
                   </div>
-                </div>
-              </form>
-            </div>
+                </form>
+              </div>
+            )}
             {message.map((message: any, index: number) => {
               // return <></>
               const messageBoxClass =
@@ -265,24 +277,22 @@ const SingleMessage = () => {
               );
             })}
           </div>
-          <div className="message_box">
-            <div className="message_icons_left">
-              <textarea
-                className="message_input"
-                value={textMessage}
-                onChange={(e: any) => setTextMessage(e.target.value)}
-                placeholder="Start a conversation"
-              />
-              <div className="icons">
-                <p>Aa</p>
-                <p>x</p>
-                <p>xs</p>
+          {customerId && (
+            <div className="message_box">
+              <div className="message_icons_left">
+                <textarea
+                  className="message_input"
+                  value={textMessage}
+                  onChange={(e: any) => setTextMessage(e.target.value)}
+                  placeholder="Start a conversation"
+                />
+                <div className="icons"></div>
+              </div>
+              <div className="button">
+                <button onClick={() => sendMessage()}>Send</button>
               </div>
             </div>
-            <div className="button">
-              <button onClick={() => sendMessage()}>Send</button>
-            </div>
-          </div>
+          )}
         </div>
         <Footer />
       </div>
