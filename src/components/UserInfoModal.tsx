@@ -3,7 +3,8 @@ import "../assets/user-info.css";
 import getCookie, { setCookie } from "../utils/getCookie";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import Axios from "axios";
+// import axios from "axios";
+import Axios from "../api";
 interface props {
   closeModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -19,17 +20,15 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const navigate = useNavigate();
+
   const onSubmit = async (data: any) => {
-    let newConversation = {
-      ...data,
-      business_id: businessId,
-    };
     try {
-      const response = await Axios.post(
-        "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
-        newConversation
+      let response = await Axios.post(
+        `/start-conversation/${businessId}`,
+        data
       );
-      let { business_id, chat_identifier } = response.data;
+      
+      let { business_id, chat_identifier } = response?.data?.data;
       navigate("/message/" + business_id + "/" + chat_identifier);
     } catch (error: any) {}
     closeModal(false);
@@ -43,7 +42,7 @@ const UserInfo: React.FC<props> = ({ closeModal }) => {
             <input
               type="text"
               id="customer_name"
-              {...register("customer_name", { required: true })}
+              {...register("name", { required: true })}
             />
             {errors.customer_name && <p>Customer name is required</p>}
           </div>

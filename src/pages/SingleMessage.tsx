@@ -9,7 +9,7 @@ import "../assets/footer.css";
 import Footer from "../layouts/Footer";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Axios from "axios";
+import Axios from "../api";
 
 const SingleMessage = () => {
   let { id, customerId } = useParams();
@@ -17,14 +17,8 @@ const SingleMessage = () => {
   const [socket, setSocket] = useState<any>(null);
   const fetchMessages = async () => {
     try {
-      const response = await Axios.get(
-        "https://chat-enif.oluwaseyialaka.repl.co/chat/get-messages/" +
-          id +
-          "/" +
-          customerId +
-          "/"
-      );
-      setMessage(response.data.messages);
+      const response = await Axios.get(`get-conversation/${id}/${customerId}`);
+      setMessage(response.data.data);
     } catch (error: any) {}
   };
   useEffect(() => {
@@ -44,16 +38,10 @@ const SingleMessage = () => {
     setTextMessage("");
     emitMessage(customerId as string, id as string);
     try {
-      const response = await Axios.post(
-        "https://chat-enif.oluwaseyialaka.repl.co/chat/send-message/" +
-          id +
-          "/" +
-          customerId,
-        {
-          sender: "customer",
-          content: textMessage,
-        }
-      );
+      const response = await Axios.post(`startChat/` + id + "/" + customerId, {
+        sender: "customer",
+        content: textMessage,
+      });
       if (response.data.success) {
         setMessage((previousMessage: any) => {
           return [
@@ -78,14 +66,15 @@ const SingleMessage = () => {
   };
 
   useEffect(() => {
-    // const newSocket = io("http://127.0.0.1:3009/", {
-      const newSocket = io("https://api.enif.ai", {
+    const newSocket = io("http://127.0.0.1:3009/", {
+      // const newSocket = io("https://api.enif.ai", {
       extraHeaders: {
         Authorization: `${id}--${customerId}`,
       },
     });
     // Add this code to handle the 'message' event
     newSocket.on("message", (data) => {
+      console.log(data);
       let newMessage = {
         content: data.message,
         sender: "agent",
