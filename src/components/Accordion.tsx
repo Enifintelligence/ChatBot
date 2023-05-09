@@ -7,14 +7,15 @@ interface AccordionProps{
     imageShow:boolean;
     image:string;
     fullPage:boolean;
+    className:string
 }
-const Accordion: React.FC<AccordionProps> = ({ title, content,imageShow,image,fullPage }) => {
+const Accordion: React.FC<AccordionProps> = ({ title, content,imageShow,image,fullPage, className }) => {
   const [isActive, setIsActive] = useState(false);
 
   return (
     <div className="faq-box ">
 
-      <div className="faq_header_box " onClick={() => setIsActive(!isActive)}>
+      <div className={`${className} " faq_header_box "`} onClick={() => setIsActive(!isActive)}>
         <div className="text_img_box">
 
         {
@@ -23,9 +24,12 @@ const Accordion: React.FC<AccordionProps> = ({ title, content,imageShow,image,fu
         <p className={`${fullPage?'faq_title':''} `}>{title}</p>
         { imageShow && <></>}
         </div>
-        <span className='accordion_toggle'>{isActive ? '-' : '+'}</span>
+        <span className='accordion_toggle'>
+          <img className={`${isActive?'arrow_down':''}`} src="/images/Arrow.png" alt="" />
+        </span>
       </div>
-        {isActive && <div className="accordion-content ">{content}</div>}
+        {isActive && <div className={`${className} accordion-content `}>{content}</div>}
+        <div className="space"></div>
     </div>
    
   );

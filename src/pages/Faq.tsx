@@ -80,7 +80,7 @@ const Faq = () => {
                 title={title}
                 content={content}
                 fullPage={true}
-
+                className=""
               />
             ))}
          

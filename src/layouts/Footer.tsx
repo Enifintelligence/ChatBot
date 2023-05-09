@@ -17,7 +17,7 @@ const Footer = () => {
                     <img src="/images/Message.png" alt="" />
                     <p>Message</p>
                 </Link>
-                <Link to='' className="element_box">
+                <Link to='/help' className="element_box">
                     <img src="/images/Help.png" alt="" />
                     <p>Help</p>
                 </Link>

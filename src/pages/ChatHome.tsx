@@ -40,7 +40,7 @@ const ChatHome = () => {
   const [openInfoModal, setOpenInfoModal] = useState(false);
   return (
     <>
-      {  (
+      {
         <div id="widget_home" className="widget">
           <header className="header">
             <div className="logo_header_container">
@@ -109,6 +109,7 @@ const ChatHome = () => {
                     title={title}
                     content={content}
                     fullPage={false}
+                    className=""
                   />
                 ))}
               </div>
@@ -117,8 +118,7 @@ const ChatHome = () => {
           {openInfoModal && <UserInfo closeModal={setOpenInfoModal} />}
           <Footer />
         </div>
-      )}
-      
+      }
     </>
   );
 };

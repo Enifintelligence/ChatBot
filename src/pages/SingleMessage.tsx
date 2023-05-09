@@ -7,11 +7,21 @@ import "../assets/all-messages.css";
 import io from "socket.io-client";
 import "../assets/footer.css";
 import Footer from "../layouts/Footer";
+import { useForm } from "react-hook-form";
+
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 
 const SingleMessage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  let { businessId } = useParams();
+
   let { id, customerId } = useParams();
   const [message, setMessage] = useState<any>([]);
   const [socket, setSocket] = useState<any>(null);
@@ -76,10 +86,9 @@ const SingleMessage = () => {
       customerIdentifier: customerId,
     });
   };
-
   useEffect(() => {
     // const newSocket = io("http://127.0.0.1:3009/", {
-      const newSocket = io("https://api.enif.ai", {
+    const newSocket = io("https://api.enif.ai", {
       extraHeaders: {
         Authorization: `${id}--${customerId}`,
       },
@@ -97,8 +106,6 @@ const SingleMessage = () => {
       });
       scrollToBottom();
       // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-
-      console.log("Received message from server: ", data);
     });
 
     newSocket.on("connect", () => {
@@ -118,7 +125,28 @@ const SingleMessage = () => {
       newSocket.disconnect();
     };
   }, [id, customerId]);
+  const [showElements, setShowElements] = useState<Array<number>>([]);
 
+  const handleFieldDisplay = (value: number): any => {
+    setShowElements((oldValue) => {
+      return [...oldValue, value];
+    });
+  };
+
+  const onSubmit = async (data: any) => {
+    let newConversation = {
+      ...data,
+      business_id: businessId,
+    };
+    try {
+      const response = await Axios.post(
+        "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
+        newConversation
+      );
+      let { business_id, chat_identifier } = response.data;
+      navigate("/message/" + business_id + "/" + chat_identifier);
+    } catch (error: any) {}
+  };
   return (
     <>
       <div className="widget_message widget">
@@ -140,22 +168,89 @@ const SingleMessage = () => {
             <button>x</button>
           </div>
         </div>
-        
+
         <div className="widget_message_body">
           <div className="chat-box">
             <div className="">
-              <form className="flex-col flex gap-4 mt-8 ">
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Full name" className="">Full name</label>
-                  <input type="text" placeholder="Enter your name" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+              <form className="" onSubmit={handleSubmit(onSubmit)}>
+                <div className="display input_box">
+                  <label htmlFor="Full name" className="">
+                    Full name
+                  </label>
+                  <div className={`input_border `}>
+                    <input
+                      type="text"
+                      placeholder="Enter your name"
+                      className="pt-[1.98rem] bg-red-300 pb-[2rem] "
+                      {...register("customer_name", { required: true })}
+                    />
+
+                    <img
+                      onClick={() => handleFieldDisplay(1)}
+                      className="check_img"
+                      src="/images/Shape.png"
+                      alt=""
+                    />
+                    {errors.customer_name && <p>Customer name is required</p>}
+                  </div>
                 </div>
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Email" className="">Email</label>
-                  <input type="email" required placeholder="Enter your name" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+                <div
+                  className={`input_box ${
+                    showElements.includes(1) ? "display" : ""
+                  }`}
+                >
+                  <label htmlFor="Email" className="">
+                    Email
+                  </label>
+                  <div className={`input_border `}>
+                    <input
+                      type="email"
+                      required
+                      placeholder="Enter your Email"
+                      className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                      {...register("customer_email", {
+                        required: true,
+                        pattern: /^\S+@\S+$/i,
+                      })}
+                    />
+                    <img
+                      onClick={() => handleFieldDisplay(2)}
+                      className="check_img"
+                      src="/images/Shape.png"
+                      alt=""
+                    />
+                    {errors.customer_email &&
+                      errors.customer_email.type === "required" && (
+                        <p>Email is required</p>
+                      )}
+                    {errors.customer_email &&
+                      errors.customer_email.type === "pattern" && (
+                        <p>Email address is invalid</p>
+                      )}
+                  </div>
                 </div>
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Phone number" className="">Phone number</label>
-                  <input type="text" placeholder="Enter your number" className="pt-[1.98rem] bg-red-300 pb-[2rem] s" />
+                <div
+                  className={`input_box ${
+                    showElements.includes(2) ? "display" : ""
+                  }`}
+                >
+                  <label htmlFor="Phone number" className="">
+                    Phone number
+                  </label>
+                  <div className={`input_border `}>
+                    <input
+                      type="text"
+                      placeholder="Enter your number"
+                      className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                      {...register("phone_number", { required: true })}
+                    />
+                    <img
+                      onClick={handleSubmit(onSubmit)}
+                      className="check_img"
+                      src="/images/Shape.png"
+                      alt=""
+                    />
+                  </div>
                 </div>
               </form>
             </div>
