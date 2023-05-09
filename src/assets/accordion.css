@@ -1,5 +1,8 @@
 .faq-box {
   width: 100%;
+  overflow: hidden;
+  overflow: scroll;
+  max-height: 10rem;
 }
 .faq_title {
   font-size: larger;
@@ -11,7 +14,7 @@
 .faq_header_box {
   padding: 0.813rem;
   color: #4c4c4d;
-
+  overflow: scroll;
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -19,9 +22,11 @@
   border-bottom: 1px solid #dcdbde;
 }
 .accordion-content {
-  color: #4c4c4d;
+  color: #585859 !important;
   padding: 0.5rem 0.8rem;
   font-size: small;
+  padding: 29px 0 1.25rem 0 ;
+  line-height: 1.25rem;
 }
 .text_img_box {
   display: flex;
@@ -34,6 +39,9 @@
   color: #1d1d1d;
   font-size: 0.75rem;
 }
+/* .space{
+  padding: 2rem 0;
+} */
 img {
   width: 2.1rem;
 }
@@ -49,4 +57,16 @@ img {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
   display: flex;
+}
+.align-accordion{
+  width: 80%;
+  margin: 0 auto;
+  color: #1d1d1d;
+}
+.accordion_toggle img{
+  width: 0.6rem;
+}
+.arrow_down{
+  rotate: 90deg;
+  transition: all 0.25s linear;
 }

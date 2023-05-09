@@ -34,9 +34,8 @@ a:hover {
 
 body {
   margin: 0;
-
   min-width: 320px;
-  min-height: 100vh;
+  min-height: max-content;
 }
 
 h1 {
@@ -75,10 +74,10 @@ button {
   background: white;
   max-width: 25rem;
   min-width: 25rem;
-  
+  height: 700px;
   border-radius: 15px;
-  overflow: scroll;
-  position: absolute;
+  overflow-y: scroll;
+  position: relative;
   /* bottom: 5%; */
   z-index: 1005;
   
@@ -98,6 +97,7 @@ button {
 }
 .widget::-webkit-scrollbar{
   display: none;
+  
 }
 
 @media screen and (max-width: 420px) {

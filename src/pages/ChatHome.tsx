@@ -4,6 +4,7 @@ import { useState } from "react";
 import Accordion from "../components/Accordion";
 import Footer from "../layouts/Footer";
 import UserInfo from "../components/UserInfoModal";
+import { useNavigate, useParams } from "react-router-dom";
 const ChatHome = () => {
   const accordionData = [
     {
@@ -35,12 +36,15 @@ const ChatHome = () => {
       dolor ut sequi minus iste? Quas?`,
     },
   ];
+  let { businessId } = useParams();
+  const navigate = useNavigate();
+
   const [widgetStatus, setWidgetStatus] = useState(false);
 
   const [openInfoModal, setOpenInfoModal] = useState(false);
   return (
     <>
-      {  (
+      {
         <div id="widget_home" className="widget">
           <header className="header">
             <div className="logo_header_container">
@@ -86,7 +90,11 @@ const ChatHome = () => {
           <div className="widget_home_body">
             <div
               className="live_chat_signal"
-              onClick={() => setOpenInfoModal(true)}
+              onClick={
+                () => navigate(`/message/${businessId}`)
+                // setOpenInfoModal(true)
+                // console.log({ params })
+              }
             >
               <div className="live_chat_text">
                 <p>Live chat</p>
@@ -109,6 +117,7 @@ const ChatHome = () => {
                     title={title}
                     content={content}
                     fullPage={false}
+                    className=""
                   />
                 ))}
               </div>
@@ -117,8 +126,7 @@ const ChatHome = () => {
           {openInfoModal && <UserInfo closeModal={setOpenInfoModal} />}
           <Footer />
         </div>
-      )}
-      
+      }
     </>
   );
 };

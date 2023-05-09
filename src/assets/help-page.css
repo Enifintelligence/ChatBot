@@ -1,11 +1,16 @@
 .help_page{
-    overflow: hidden;
+    overflow-y: hidden;
+    /* background-color: green; */
     
 }
 .search_box{
 border: 1px solid #BEBDBF;
 margin-top: 1.55rem;
 width: 80%;
+}
+.search_box input{
+    border: none;
+    font-size: 0.8rem;
 }
 h2{
     white-space: nowrap;
@@ -41,9 +46,16 @@ h2{
     color: white;
 }
 .button_text{
-    width: 3.75rem;
+    /* width: 3rem; */
     white-space: nowrap;
     display: flex;
     justify-content: center;
    
+}
+.accordion_toggle img{
+    width: 0.6rem;
+}
+.arrow_down{
+    rotate: 90deg;
+    transition: all 0.25s linear;
 }

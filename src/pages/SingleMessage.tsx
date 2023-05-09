@@ -7,12 +7,22 @@ import "../assets/all-messages.css";
 import io from "socket.io-client";
 import "../assets/footer.css";
 import Footer from "../layouts/Footer";
+import { useForm } from "react-hook-form";
+
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Axios from "../api";
 import axios from "axios";
 
 const SingleMessage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  let { id: businessId } = useParams();
+
   let { id, customerId } = useParams();
   const [message, setMessage] = useState<any>([]);
   const [socket, setSocket] = useState<any>(null);
@@ -23,8 +33,8 @@ const SingleMessage = () => {
     } catch (error: any) {}
   };
   useEffect(() => {
-    fetchMessages();
-  }, []);
+    customerId && fetchMessages();
+  }, [customerId]);
   const navigate = useNavigate();
   const [textMessage, setTextMessage] = useState("");
 
@@ -66,7 +76,6 @@ const SingleMessage = () => {
       customerIdentifier: customerId,
     });
   };
-
   useEffect(() => {
     // const newSocket = io("http://127.0.0.1:3009/", {
     const newSocket = io("https://api.enif.ai", {
@@ -88,8 +97,6 @@ const SingleMessage = () => {
       });
       scrollToBottom();
       // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-
-      console.log("Received message from server: ", data);
     });
 
     newSocket.on("connect", () => {
@@ -109,7 +116,38 @@ const SingleMessage = () => {
       newSocket.disconnect();
     };
   }, [id, customerId]);
+  const [showElements, setShowElements] = useState<Array<number>>([]);
 
+  const handleFieldDisplay = (value: number): any => {
+    setShowElements((oldValue) => {
+      return [...oldValue, value];
+    });
+  };
+
+  const onSubmit = async (data: any) => {
+    let newConversation = {
+      ...data,
+      business_id: businessId,
+    };
+    try {
+      let response = await Axios.post(
+        `/start-conversation/${businessId}`,
+        data
+      );
+
+      let { business_id, chat_identifier } = response?.data?.data;
+      // console.log(business_id, chat_identifier);
+      navigate("/message/" + business_id + "/" + chat_identifier);
+    } catch (error: any) {}
+    // try {
+    //   const response = await Axios.post(
+    //     "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
+    //     newConversation
+    //   );
+    //   let { business_id, chat_identifier } = response.data;
+    //   navigate("/message/" + business_id + "/" + chat_identifier);
+    // } catch (error: any) {}
+  };
   return (
     <>
       <div className="widget_message widget">
@@ -134,41 +172,91 @@ const SingleMessage = () => {
 
         <div className="widget_message_body">
           <div className="chat-box">
-            <div className="">
-              <form className="flex-col flex gap-4 mt-8 ">
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Full name" className="">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your name"
-                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                  />
-                </div>
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Email" className="">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Enter your name"
-                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                  />
-                </div>
-                <div className="shadow-md bg-white">
-                  <label htmlFor="Phone number" className="">
-                    Phone number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your number"
-                    className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                  />
-                </div>
-              </form>
-            </div>
+            {!customerId && (
+              <div className="">
+                <form className="" onSubmit={handleSubmit(onSubmit)}>
+                  <div className="display input_box">
+                    <label htmlFor="Full name" className="">
+                      Full name
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="text"
+                        placeholder="Enter your name"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] "
+                        {...register("name", { required: true })}
+                      />
+
+                      <img
+                        onClick={() => handleFieldDisplay(1)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                      {errors.customer_name && <p>Customer name is required</p>}
+                    </div>
+                  </div>
+                  <div
+                    className={`input_box ${
+                      showElements.includes(1) ? "display" : ""
+                    }`}
+                  >
+                    <label htmlFor="Email" className="">
+                      Email
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="email"
+                        required
+                        placeholder="Enter your Email"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                        {...register("customer_email", {
+                          required: true,
+                          pattern: /^\S+@\S+$/i,
+                        })}
+                      />
+                      <img
+                        onClick={() => handleFieldDisplay(2)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                      {errors.customer_email &&
+                        errors.customer_email.type === "required" && (
+                          <p>Email is required</p>
+                        )}
+                      {errors.customer_email &&
+                        errors.customer_email.type === "pattern" && (
+                          <p>Email address is invalid</p>
+                        )}
+                    </div>
+                  </div>
+                  <div
+                    className={`input_box ${
+                      showElements.includes(2) ? "display" : ""
+                    }`}
+                  >
+                    <label htmlFor="Phone number" className="">
+                      Phone number
+                    </label>
+                    <div className={`input_border `}>
+                      <input
+                        type="text"
+                        placeholder="Enter your number"
+                        className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
+                        {...register("phone_number", { required: true })}
+                      />
+                      <img
+                        onClick={handleSubmit(onSubmit)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            )}
             {message.map((message: any, index: number) => {
               // return <></>
               const messageBoxClass =
@@ -189,24 +277,22 @@ const SingleMessage = () => {
               );
             })}
           </div>
-          <div className="message_box">
-            <div className="message_icons_left">
-              <textarea
-                className="message_input"
-                value={textMessage}
-                onChange={(e: any) => setTextMessage(e.target.value)}
-                placeholder="Start a conversation"
-              />
-              <div className="icons">
-                <p>Aa</p>
-                <p>x</p>
-                <p>xs</p>
+          {customerId && (
+            <div className="message_box">
+              <div className="message_icons_left">
+                <textarea
+                  className="message_input"
+                  value={textMessage}
+                  onChange={(e: any) => setTextMessage(e.target.value)}
+                  placeholder="Start a conversation"
+                />
+                <div className="icons"></div>
+              </div>
+              <div className="button">
+                <button onClick={() => sendMessage()}>Send</button>
               </div>
             </div>
-            <div className="button">
-              <button onClick={() => sendMessage()}>Send</button>
-            </div>
-          </div>
+          )}
         </div>
         <Footer />
       </div>
