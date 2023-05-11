@@ -183,7 +183,7 @@ const SingleMessage = () => {
                       <input
                         type="text"
                         placeholder="Enter your name"
-                        className="pt-[1.98rem] bg-red-300 pb-[2rem] "
+                        className=""
                         {...register("name", { required: true })}
                       />
 
@@ -197,8 +197,8 @@ const SingleMessage = () => {
                     </div>
                   </div>
                   <div
-                    className={`input_box ${
-                      showElements.includes(1) ? "display" : ""
+                    className={`input_box display ${
+                      showElements.includes(1) ? "" : ""
                     }`}
                   >
                     <label htmlFor="Email" className="">
@@ -232,8 +232,8 @@ const SingleMessage = () => {
                     </div>
                   </div>
                   <div
-                    className={`input_box ${
-                      showElements.includes(2) ? "display" : ""
+                    className={`input_box display ${
+                      showElements.includes(2) ? "" : ""
                     }`}
                   >
                     <label htmlFor="Phone number" className="">
