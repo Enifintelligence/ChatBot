@@ -36,13 +36,13 @@ form {
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
   max-width: 75%;
   padding: 1.98rem 0rem 2rem 1.8rem;
-  /* border-top: 1.5px solid #C8C8C8; */
+
   border-radius: 8px;
   display: flex;
-  /* justify-items: start; */
+  
   flex-direction: column;
-  /* padding: 0 ; */
-  visibility: hidden
+
+  visibility: hidden;
 }
 form label {
   color: #1a1a1b;
@@ -50,15 +50,13 @@ form label {
   line-height: 120%;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  
 }
-.input_border{
+.input_border {
   position: relative;
   overflow: clip;
- 
 }
 
-.check_img{
+.check_img {
   position: absolute;
   background-color: black;
   padding: 0.5rem 0.6rem;
@@ -68,14 +66,24 @@ form label {
   right: 20%;
   border-radius: 0 6px 6px 0;
 }
+.check_img_2{
+  position: absolute;
+  padding: 0.5rem 0.6rem;
+  top: 51%;
+  width: 0.8rem;
+  translate: 0 -50%;
+  right: 20%;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
 form div input {
   max-width: 75%;
   border: 1px solid #a4a4a6;
   border-radius: 6px;
   /* margin: 0 auto; */
   overflow: clip;
+  font-size: 0.8rem;
 }
-.display{
+.display {
   visibility: visible;
 }
-

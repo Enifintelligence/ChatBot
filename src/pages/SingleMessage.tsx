@@ -19,8 +19,13 @@ const SingleMessage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
+    watch,
   } = useForm();
 
+  const watchName = watch("name", "");
+  const watchEmail = watch("customer_email", "");
+  const watchPassword = watch("phone_number", "");
   let { id: businessId } = useParams();
 
   let { id, customerId } = useParams();
@@ -131,22 +136,14 @@ const SingleMessage = () => {
     };
     try {
       let response = await Axios.post(
-        `/start-conversation/${businessId}`,
+        `/start-conversation/${businessId}/`,
         data
       );
-
+        console.log('hello')
       let { business_id, chat_identifier } = response?.data?.data;
-      // console.log(business_id, chat_identifier);
+      console.log(business_id, chat_identifier);
       navigate("/message/" + business_id + "/" + chat_identifier);
     } catch (error: any) {}
-    // try {
-    //   const response = await Axios.post(
-    //     "https://chat-enif.oluwaseyialaka.repl.co/chat/create-chat",
-    //     newConversation
-    //   );
-    //   let { business_id, chat_identifier } = response.data;
-    //   navigate("/message/" + business_id + "/" + chat_identifier);
-    // } catch (error: any) {}
   };
   return (
     <>
@@ -183,22 +180,34 @@ const SingleMessage = () => {
                       <input
                         type="text"
                         placeholder="Enter your name"
-                        className="pt-[1.98rem] bg-red-300 pb-[2rem] "
+                        className=""
                         {...register("name", { required: true })}
                       />
 
-                      <img
-                        onClick={() => handleFieldDisplay(1)}
-                        className="check_img"
-                        src="/images/Shape.png"
-                        alt=""
-                      />
-                      {errors.customer_name && <p>Customer name is required</p>}
+                      {watchName.length > 0 ? (
+                        <img
+                          // onClick={() => handleFieldDisplay(2)}
+                          className="check_img_2"
+                          src="/images/Check.png"
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          onClick={() => handleFieldDisplay(2)}
+                          className="check_img"
+                          src="/images/Shape.png"
+                          alt=""
+                        />
+                      )}
+                      {errors?.customer_name &&
+                        errors?.customer_name.type === "required" && (
+                          <p>Customer name is required</p>
+                        )}
                     </div>
                   </div>
                   <div
-                    className={`input_box ${
-                      showElements.includes(1) ? "display" : ""
+                    className={`input_box display ${
+                      showElements.includes(1) ? "" : ""
                     }`}
                   >
                     <label htmlFor="Email" className="">
@@ -215,12 +224,21 @@ const SingleMessage = () => {
                           pattern: /^\S+@\S+$/i,
                         })}
                       />
-                      <img
-                        onClick={() => handleFieldDisplay(2)}
-                        className="check_img"
-                        src="/images/Shape.png"
-                        alt=""
-                      />
+                      {watchEmail.length > 0 ? (
+                        <img
+                          onClick={() => handleFieldDisplay(2)}
+                          className="check_img_2"
+                          src="/images/Check.png"
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          onClick={() => handleFieldDisplay(2)}
+                          className="check_img"
+                          src="/images/Shape.png"
+                          alt=""
+                        />
+                      )}
                       {errors.customer_email &&
                         errors.customer_email.type === "required" && (
                           <p>Email is required</p>
@@ -232,8 +250,8 @@ const SingleMessage = () => {
                     </div>
                   </div>
                   <div
-                    className={`input_box ${
-                      showElements.includes(2) ? "display" : ""
+                    className={`input_box display ${
+                      showElements.includes(2) ? "" : ""
                     }`}
                   >
                     <label htmlFor="Phone number" className="">
@@ -244,14 +262,42 @@ const SingleMessage = () => {
                         type="text"
                         placeholder="Enter your number"
                         className="pt-[1.98rem] bg-red-300 pb-[2rem] s"
-                        {...register("phone_number", { required: true })}
+                        {...register("phone_number", {
+                          required: true,
+                          minLength: 10,
+                          maxLength: 12,
+                          validate: (value) => {
+                            const regex = /^\d{10,12}$/;
+                            return regex.test(value);
+                          },
+                        })}
                       />
+                      {/* {watchPassword.length > 0 ? (
+                        <img
+                          onClick={handleSubmit(onSubmit)}
+                          className="check_img_2"
+                          src="/images/Check.png"
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          onClick={handleSubmit(onSubmit)}
+                          className="check_img"
+                          src="/images/Shape.png"
+                          alt=""
+                        />
+                      )} */}
                       <img
-                        onClick={handleSubmit(onSubmit)}
-                        className="check_img"
-                        src="/images/Shape.png"
-                        alt=""
-                      />
+                          onClick={handleSubmit(onSubmit)}
+                          className="check_img"
+                          src="/images/Shape.png"
+                          alt=""
+                        />
+                      {errors.phone_number &&
+                        errors.phone_number.type === "required" && (
+                          <p>Phone number is required</p>
+                        )}
+                      {errors.phone_number && <p>Phone number is invalid</p>}
                     </div>
                   </div>
                 </form>

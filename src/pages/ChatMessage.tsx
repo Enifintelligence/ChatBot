@@ -112,24 +112,7 @@ const ChatMessage = () => {
               We help your business grow by connecting you to your customers
             </p>
           </div>
-          {/* <div className="chat-box">
-            {messages.map((message, index) => {
-              const messageBoxClass =
-                message.fromUserId === 0 ? "message-sent" : "message-received";
-              const messageClass =
-                message.fromUserId === 0 ? "sent" : "received";
-              return (
-                <div className={`message-box ${messageBoxClass}`}>
-                  {
-                    message.fromUserId === 0 && <img src='images/Image-3.png' alt="" />
-                  }
-                <div key={index} className={`message ${messageClass}`}>
-                  {message.text}
-                </div>
-                </div>
-              );
-            })}
-          </div> */}
+          
           <div className="message_box">
             <div className="message_icons_left">
               <textarea
