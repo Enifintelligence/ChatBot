@@ -175,7 +175,7 @@ const SingleMessage = () => {
                   src="/images/Image-1.png"
                   alt=""
                 />
-                <small>Funke</small>
+                <small>Akindele</small>
               </div>
             </div>
             <button>x</button>
