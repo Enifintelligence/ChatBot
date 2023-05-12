@@ -66,6 +66,16 @@ form label {
   right: 20%;
   border-radius: 0 6px 6px 0;
 }
+.check_img_2{
+  position: absolute;
+  padding: 0.5rem 0.6rem;
+  top: 51%;
+  width: 0.8rem;
+  translate: 0 -50%;
+  right: 20%;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+}
 form div input {
   max-width: 75%;
   border: 1px solid #a4a4a6;
