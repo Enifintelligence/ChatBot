@@ -54,22 +54,34 @@ const SingleMessage = () => {
     setTextMessage("");
     emitMessage(customerId as string, id as string);
     try {
+      setMessage((previousMessage: any) => {
+        return [
+          ...previousMessage,
+          {
+            content: textMessage.trim(),
+            sender: "customer",
+            sent_time: new Date(),
+          },
+        ];
+      });
+        scrollToBottom();
+
       const response = await Axios.post(`send-chat/` + id + "/" + customerId, {
         // const response = await Axios.post(`sendChat/` + id + "/" + customerId, {
         sender: "customer",
         content: textMessage,
       });
       if (response.data.success) {
-        setMessage((previousMessage: any) => {
-          return [
-            ...previousMessage,
-            {
-              content: textMessage.trim(),
-              sender: "customer",
-              sent_time: new Date(),
-            },
-          ];
-        });
+        // setMessage((previousMessage: any) => {
+        //   return [
+        //     ...previousMessage,
+        //     {
+        //       content: textMessage.trim(),
+        //       sender: "customer",
+        //       sent_time: new Date(),
+        //     },
+        //   ];
+        // });
         scrollToBottom();
       }
     } catch (error: any) {}
@@ -82,45 +94,48 @@ const SingleMessage = () => {
     });
   };
   useEffect(() => {
-    // const newSocket = io("http://127.0.0.1:3009/", {
-    const newSocket = io("https://api.enif.ai", {
-      extraHeaders: {
-        Authorization: `${id}--${customerId}`,
-      },
-    });
-    // Add this code to handle the 'message' event
-    newSocket.on("message", (data) => {
-      console.log(data);
-      let newMessage = {
-        content: data.message,
-        sender: "agent",
-        sent_time: new Date(),
-      };
-      console.log({ data });
-      setMessage((previousMessages: any) => {
-        return [...previousMessages, newMessage];
+    if (customerId) {
+      const newSocket = io("http://127.0.0.1:3009/", {
+        // const newSocket = io("https://api.enif.ai", {
+        extraHeaders: {
+          Authorization: `${id}--${customerId}`,
+        },
       });
-      scrollToBottom();
-      // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-    });
+      // Add this code to handle the 'message' event
+      newSocket.on("message", (data) => {
+        console.log(data);
+        let newMessage = {
+          content: data.message,
+          sender: "agent",
+          sent_time: new Date(),
+        };
+        console.log({ data });
+        setMessage((previousMessages: any) => {
+          return [...previousMessages, newMessage];
+        });
+        scrollToBottom();
+        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      });
 
-    newSocket.on("connect", () => {
-      console.log("Connected to socket server");
-      // newSocket.emit("hello", "Hello server!");
-    });
+      newSocket.on("connect", () => {
+        console.log("Connected to socket server");
+        // newSocket.emit("hello", "Hello server!");
+      });
 
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from socket server");
-    });
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from socket server");
+      });
 
-    // Save the socket instance to the state variable
-    setSocket(newSocket);
+      // Save the socket instance to the state variable
+      setSocket(newSocket);
+      console.log(customerId);
 
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [id, customerId]);
+      // Clean up the socket connection when the component unmounts
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [customerId]);
   const [showElements, setShowElements] = useState<Array<number>>([]);
 
   const handleFieldDisplay = (value: number): any => {
