@@ -4,7 +4,7 @@ const apiUrl =
   // || "https://jarvis.enif.ai/";
   "http://localhost:3009/chat/";
   // "https://api.enif.ai/chat/";
-console.log({ apiUrl });
+
 
 const instance = axios.create({
   baseURL: apiUrl,
