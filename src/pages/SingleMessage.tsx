@@ -344,6 +344,7 @@ const SingleMessage = () => {
                 <textarea
                   className="message_input"
                   value={textMessage}
+                  rows={4}
                   onChange={(e: any) => setTextMessage(e.target.value)}
                   placeholder="Start a conversation"
                 />
