@@ -64,7 +64,7 @@ const SingleMessage = () => {
           },
         ];
       });
-        scrollToBottom();
+      scrollToBottom();
 
       const response = await Axios.post(`send-chat/` + id + "/" + customerId, {
         // const response = await Axios.post(`sendChat/` + id + "/" + customerId, {
@@ -96,7 +96,7 @@ const SingleMessage = () => {
   useEffect(() => {
     if (customerId) {
       // const newSocket = io("http://127.0.0.1:3009/", {
-        const newSocket = io("https://api.enif.ai", {
+      const newSocket = io("https://api.enif.ai", {
         extraHeaders: {
           Authorization: `${id}--${customerId}`,
         },
@@ -154,7 +154,7 @@ const SingleMessage = () => {
         `/start-conversation/${businessId}/`,
         data
       );
-        console.log('hello')
+      console.log("hello");
       let { business_id, chat_identifier } = response?.data?.data;
       console.log(business_id, chat_identifier);
       navigate("/message/" + business_id + "/" + chat_identifier);
@@ -303,11 +303,11 @@ const SingleMessage = () => {
                         />
                       )} */}
                       <img
-                          onClick={handleSubmit(onSubmit)}
-                          className="check_img"
-                          src="/images/Shape.png"
-                          alt=""
-                        />
+                        onClick={handleSubmit(onSubmit)}
+                        className="check_img"
+                        src="/images/Shape.png"
+                        alt=""
+                      />
                       {errors.phone_number &&
                         errors.phone_number.type === "required" && (
                           <p>Phone number is required</p>
