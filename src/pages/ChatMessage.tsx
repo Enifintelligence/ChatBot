@@ -21,6 +21,15 @@ function getCookie(name:string) {
   }
   return cookieValue;
 }
+function calcHeight(value:string) {
+  const lines = value.split("\n");
+  const height = lines.length * 16;
+  return height;
+}
+const textarea:HTMLTextAreaElement|null = document.querySelector(".message-input");
+textarea?.addEventListener("keyup", () => {
+textarea!.style.height = calcHeight(textarea?.value) + "px";
+});
 const ChatMessage = () => {
   const navigate =useNavigate()
   const [chatId, setChatId] = useState("");
