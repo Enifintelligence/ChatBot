@@ -1,26 +1,19 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  
-  position: fixed;
-  /* right: 10%; */
-  bottom: 10%;
-  color: rgba(255, 255, 255, 0.87);
-  background: transparent;
-  /* border: blue 1px solid; */
-  font-kerning: 0.05em;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-  letter-spacing: -0.02em;
-  min-width: 400px;
-  max-width: 400px;
-  min-height: 900px;
-  z-index: 1500;
-  top: 2rem;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+input{
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 a {
@@ -32,11 +25,11 @@ a:hover {
   color: #535bf2;
 }
 
-body {
+/* body {
   margin: 0;
   min-width: 320px;
   min-height: max-content;
-}
+} */
 
 h1 {
   font-size: 3.2em;
