@@ -5,6 +5,8 @@ import Accordion from "../components/Accordion";
 import Footer from "../layouts/Footer";
 import UserInfo from "../components/UserInfoModal";
 import { useNavigate, useParams } from "react-router-dom";
+import ChatBot from "../components/chatbot/chatBot"
+
 const ChatHome = () => {
   const accordionData = [
     {
@@ -45,8 +47,8 @@ const ChatHome = () => {
   return (
     <>
       {
-        <div id="widget_home" className="widget">
-          <header className="header">
+        <div id="widget_home">
+          {/* <header className="header">
             <div className="logo_header_container">
               <div className="logo_box">
                 <img src="/images/Logo.png" alt="" />
@@ -124,7 +126,8 @@ const ChatHome = () => {
             </div>
           </div>
           {openInfoModal && <UserInfo closeModal={setOpenInfoModal} />}
-          <Footer />
+          <Footer /> */}
+          <ChatBot businessId={businessId} ></ChatBot>
         </div>
       }
     </>

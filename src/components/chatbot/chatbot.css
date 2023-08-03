@@ -1,0 +1,8 @@
+.chatbot_container{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0.5em 0.5em 1em 1em;
+    display: grid;
+    gap: 1rem;
+}
