@@ -19,6 +19,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     const [message, setMessage] = useState<any>([]);
     const [textMessage, setTextMessage] = useState("");
+    const [typing, setTyping] = useState(false);
     const [socket, setSocket] = useState<any>(null);
     const fetchMessages = async () => {
         try {
@@ -76,6 +77,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     const sendMessage = async () => {
         setTextMessage("");
+        setTyping(true)
         emitMessage(props.chatIdentifier as string, id as string);
         try {
           setMessage((previousMessage: any) => {
@@ -106,6 +108,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             //     },
             //   ];
             // });
+            setTyping(false)
             scrollToBottom();
           }
         } catch (error: any) {}
@@ -140,16 +143,27 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                 const messageClass =
                     msg.sender === "agent" ? "sent" : "received";
                 return (
-                    <div key={index} className={`message-box ${messageBoxClass} ${(index == message.length-1) ? " magb" : ""}` } >
-                    {message.fromUserId === 0 && (
-                        <img className="" src="images/Image-1.png" alt="" />
-                    )}
-                    <div key={index} className={`message ${messageClass}`}>
-                        {msg.content}
-                    </div>
-                    </div>
+                    <>
+                      <div key={index} className={`message-box ${messageBoxClass} ${(!typing && index == message.length-1) ? " magb" : ""}` } >
+                        {message.fromUserId === 0 && (
+                            <img className="" src="images/Image-1.png" alt="" />
+                        )}
+                        <div key={index} className={`message ${messageClass}`}>
+                            {msg.content}
+                        </div>
+                      </div>
+                    </>
                 );
                 })}
+                {typing &&
+                  <div className="chat_bubble">
+                    <div className="typing">
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                    </div>
+                  </div>
+                }
             </div>
             {props.chatIdentifier && (
                 <div className="message_box">
