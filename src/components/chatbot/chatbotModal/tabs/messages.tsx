@@ -77,7 +77,10 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     const sendMessage = async () => {
         setTextMessage("");
-        setTyping(true)
+        setTimeout(async () => {
+          setTyping(true)
+          scrollToBottom();
+        }, 3000)
         emitMessage(props.chatIdentifier as string, id as string);
         try {
           setMessage((previousMessage: any) => {
@@ -91,26 +94,27 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             ];
           });
           scrollToBottom();
-    
-          const response = await Axios.post(`send-chat/` + id + "/" + props.chatIdentifier, {
-            // const response = await Axios.post(`sendChat/` + id + "/" + props.chatIdentifier, {
-            sender: "customer",
-            content: textMessage,
-          });
-          if (response.data.success) {
-            // setMessage((previousMessage: any) => {
-            //   return [
-            //     ...previousMessage,
-            //     {
-            //       content: textMessage.trim(),
-            //       sender: "customer",
-            //       sent_time: new Date(),
-            //     },
-            //   ];
-            // });
-            setTyping(false)
-            scrollToBottom();
-          }
+          setTimeout(async () => {
+            const response = await Axios.post(`send-chat/` + id + "/" + props.chatIdentifier, {
+              // const response = await Axios.post(`sendChat/` + id + "/" + props.chatIdentifier, {
+              sender: "customer",
+              content: textMessage,
+            });
+            if (response.data.success) {
+              // setMessage((previousMessage: any) => {
+              //   return [
+              //     ...previousMessage,
+              //     {
+              //       content: textMessage.trim(),
+              //       sender: "customer",
+              //       sent_time: new Date(),
+              //     },
+              //   ];
+              // });
+              setTyping(false)
+              scrollToBottom();
+            }
+          }, 5000)
         } catch (error: any) {}
     };
 
@@ -155,15 +159,16 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                     </>
                 );
                 })}
-                {typing &&
+                {/* {typing && */}
                   <div className="chat_bubble">
+                    Javis is typing
                     <div className="typing">
                       <div className="dot"></div>
                       <div className="dot"></div>
                       <div className="dot"></div>
                     </div>
                   </div>
-                }
+                {/* } */}
             </div>
             {props.chatIdentifier && (
                 <div className="message_box">
