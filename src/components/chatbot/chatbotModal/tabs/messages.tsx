@@ -159,7 +159,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                     </>
                 );
                 })}
-                {/* {typing && */}
+                {typing &&
                   <div className="chat_bubble">
                     Javis is typing
                     <div className="typing">
@@ -168,7 +168,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                       <div className="dot"></div>
                     </div>
                   </div>
-                {/* } */}
+                }
             </div>
             {props.chatIdentifier && (
                 <div className="message_box">
