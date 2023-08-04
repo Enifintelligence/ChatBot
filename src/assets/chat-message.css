@@ -149,7 +149,7 @@ button {
 .chat_bubble {
   /* background-color:#E6F8F1; */
   background-color: rgb(234 241 255);
-  padding:16px 28px;
+  padding:16px 11px;
   -webkit-border-radius: 20px;
   -webkit-border-bottom-left-radius: 2px;
   -moz-border-radius: 20px;
@@ -159,9 +159,14 @@ button {
   display:inline-block;
   margin-bottom: 8rem;
   max-width: max-content;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: end;
+  font-size: 14px;
+  gap: 4px;
 }
 .typing {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
   height: 17px;
 }
@@ -170,10 +175,10 @@ button {
   /* background-color: #6CAD96; */
   background-color: rgb(41, 108, 241);
   border-radius: 50%;
-  height: 7px;
-  margin-right: 4px;
+  height: 5px;
+  margin-right: 3px;
   vertical-align: middle;
-  width: 7px;
+  width: 5px;
   display: inline-block;
 }
 .typing .dot:nth-child(1) {
