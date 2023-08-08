@@ -5,6 +5,7 @@ import "../../../../assets/chat-message.css";
 import Axios from "../../../../api";
 import io from "socket.io-client";
 import axios from 'axios';
+import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
 
 interface ChatProps {
     chatIdentifier: string,
@@ -141,6 +142,12 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                 data['name'] = contents[0]
                 msgs.push(data);
               }
+              if(msgs.length == 0){
+                
+                let data: any = {}
+                data['name'] = response.data.content.replace(/\n/g, '<br>')
+                msgs.push(data);
+              }
               setMessage((previousMessage: any) => {
                 return [
                   ...previousMessage,
@@ -202,7 +209,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                             msg.content.map((msg: any, idx: number) => {
                               return(
                                   <div className={`chat_content`}>
-                                      <p>{msg.name}</p>
+                                      <p>{ReactHtmlParser(msg.name)}</p>
                                       {msg.image &&
                                       <img className="" src={msg.image} alt={msg.name} />}
                                   </div>
