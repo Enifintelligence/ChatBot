@@ -123,17 +123,23 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               console.log(response.data.content.split('\n'));
               let contents = response.data.content.split('\n');
               let msgs: any[] = []
-              for (let i = 0; i < contents.length; i++) {
-                let data: any = {}
-                let name = contents[i].match(/\[(.*?)\]/)
-                let image = contents[i].match(/\((.*?)\)/)
-                if(name){
-                  data['name'] = name[1];
-                  if(image){
-                    data['image'] = image[1];
+              if(contents.length > 1){
+                for (let i = 0; i < contents.length; i++) {
+                  let data: any = {}
+                  let name = contents[i].match(/\[(.*?)\]/)
+                  let image = contents[i].match(/\((.*?)\)/)
+                  if(name){
+                    data['name'] = name[1];
+                    if(image){
+                      data['image'] = image[1];
+                    }
+                    msgs.push(data);
                   }
-                  msgs.push(data);
                 }
+              }else{
+                let data: any = {}
+                data['name'] = contents[0]
+                msgs.push(data);
               }
               setMessage((previousMessage: any) => {
                 return [
@@ -197,7 +203,8 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                               return(
                                   <div className={`chat_content`}>
                                       <p>{msg.name}</p>
-                                      <img className="" src={msg.image} alt={msg.name} />
+                                      {msg.image &&
+                                      <img className="" src={msg.image} alt={msg.name} />}
                                   </div>
                               )
                             })
