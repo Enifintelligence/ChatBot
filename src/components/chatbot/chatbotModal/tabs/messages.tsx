@@ -4,6 +4,7 @@ import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
 import Axios from "../../../../api";
 import io from "socket.io-client";
+import axios from 'axios';
 
 interface ChatProps {
     chatIdentifier: string,
@@ -95,22 +96,55 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
           });
           scrollToBottom();
           setTimeout(async () => {
-            const response = await Axios.post(`send-chat/` + id + "/" + props.chatIdentifier, {
-              // const response = await Axios.post(`sendChat/` + id + "/" + props.chatIdentifier, {
-              sender: "customer",
-              content: textMessage,
-            });
-            if (response.data.success) {
-              // setMessage((previousMessage: any) => {
-              //   return [
-              //     ...previousMessage,
-              //     {
-              //       content: textMessage.trim(),
-              //       sender: "customer",
-              //       sent_time: new Date(),
-              //     },
-              //   ];
-              // });
+            // const response = await Axios.post(`send-chat/` + id + "/" + props.chatIdentifier, {
+            //   // const response = await Axios.post(`sendChat/` + id + "/" + props.chatIdentifier, {
+            //   sender: "customer",
+            //   content: textMessage,
+            // });
+            
+            // if (response.data.success) {
+            //   // setMessage((previousMessage: any) => {
+            //   //   return [
+            //   //     ...previousMessage,
+            //   //     {
+            //   //       content: textMessage.trim(),
+            //   //       sender: "customer",
+            //   //       sent_time: new Date(),
+            //   //     },
+            //   //   ];
+            //   // });
+            //   setTyping(false)
+            //   scrollToBottom();
+            // }
+            let url = `https://enif-gmail-integration-0b011ce2c83a.herokuapp.com/ai?prompt=${textMessage}`
+            const response = await axios({url: url, method: 'get'});
+            
+            if (response.data.content) {
+              console.log(response.data.content.split('\n'));
+              let contents = response.data.content.split('\n');
+              let msgs: any[] = []
+              for (let i = 0; i < contents.length; i++) {
+                let data: any = {}
+                let name = contents[i].match(/\[(.*?)\]/)
+                let image = contents[i].match(/\((.*?)\)/)
+                if(name){
+                  data['name'] = name[1];
+                  if(image){
+                    data['image'] = image[1];
+                  }
+                  msgs.push(data);
+                }
+              }
+              setMessage((previousMessage: any) => {
+                return [
+                  ...previousMessage,
+                  {
+                    content: msgs,
+                    sender: "agent",
+                    sent_time: new Date(),
+                  },
+                ];
+              });
               setTyping(false)
               scrollToBottom();
             }
@@ -152,8 +186,22 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                         {message.fromUserId === 0 && (
                             <img className="" src="images/Image-1.png" alt="" />
                         )}
+                        {msg.sender === "customer" &&
                         <div key={index} className={`message ${messageClass}`}>
                             {msg.content}
+                        </div>
+                        }
+                        <div className={`chat_content_con` }>
+                          {msg.sender === "agent" &&
+                            msg.content.map((msg: any, idx: number) => {
+                              return(
+                                  <div className={`chat_content`}>
+                                      <p>{msg.name}</p>
+                                      <img className="" src={msg.image} alt={msg.name} />
+                                  </div>
+                              )
+                            })
+                          }
                         </div>
                       </div>
                     </>
