@@ -117,7 +117,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             //   setTyping(false)
             //   scrollToBottom();
             // }
-            let url = `http://localhost:3000/ai?prompt=${textMessage}`
+            let url = `https://enif-gmail-integration-0b011ce2c83a.herokuapp.com/ai?prompt=${textMessage}`
             const response = await axios({url: url, method: 'get'});
             
             if (response.data.content) {
