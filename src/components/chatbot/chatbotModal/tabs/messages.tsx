@@ -117,42 +117,73 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             //   setTyping(false)
             //   scrollToBottom();
             // }
-            let url = `https://enif-gmail-integration-0b011ce2c83a.herokuapp.com/ai?prompt=${textMessage}`
+            let url = `http://localhost:3000/ai?prompt=${textMessage}`
             const response = await axios({url: url, method: 'get'});
             
             if (response.data.content) {
               console.log(response.data.content.split('\n'));
-              let contents = response.data.content.split('\n');
-              let msgs: any[] = []
-              if(contents.length > 1){
-                for (let i = 0; i < contents.length; i++) {
-                  let data: any = {}
-                  let name = contents[i].match(/\[(.*?)\]/)
-                  let image = contents[i].match(/\((.*?)\)/)
-                  if(name){
-                    data['name'] = name[1];
-                    if(image){
-                      data['image'] = image[1];
-                    }
-                    msgs.push(data);
-                  }
-                }
-              }else{
-                let data: any = {}
-                data['name'] = contents[0]
-                msgs.push(data);
-              }
-              if(msgs.length == 0){
+              // let contents = response.data.content.split('\n');
+              // let msgs: any[] = []
+              // if(contents.length > 1){
+              //   for (let i = 0; i < contents.length; i++) {
+              //     let data: any = {}
+              //     let name = contents[i].match(/\[(.*?)\]/)
+              //     let image = contents[i].match(/\((.*?)\)/)
+              //     if(name){
+              //       data['name'] = name[1];
+              //       if(image){
+              //         data['image'] = image[1];
+              //       }
+              //       msgs.push(data);
+              //     }
+              //   }
+              // }else{
+              //   let data: any = {}
+              //   data['name'] = contents[0]
+              //   msgs.push(data);
+              // }
+              // if(msgs.length == 0){
+              //   let data: any = {}
+              //   let msg =response.data.content;
+              //   let name = response.data.content.match(/\[(.*?)\]/)
+              //   let image = response.data.content.match(/\((.*?)\)/)
                 
-                let data: any = {}
-                data['name'] = response.data.content.replace(/\n/g, '<br>')
-                msgs.push(data);
+              //   if(name || image){
+              //     msg = msg.replace(/\[(.*?)\]/g, '<br>')
+              //     let images = msg.match(/\((.*?)\)/g)
+              //     for (let i = 0; i < images.length; i++) {
+              //       const image = images[i];
+              //       let exImage = image.match(/\((.*?)\)/);
+              //       msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+              //       msg = msg.replace('!', '')
+              //       // msg = msg.replace(' - ', '<>&emsp</>')
+              //     }
+              //   }
+                
+              //   data['name'] = msg.replace(/\n/g, '<br>')
+              //   msgs.push(data);
+              // }
+              let msg =response.data.content;
+              let name = response.data.content.match(/\[(.*?)\]/)
+              let image = response.data.content.match(/\((.*?)\)/)
+              
+              if(name || image){
+                msg = msg.replace(/\[(.*?)\]/g, '<br>')
+                let images = msg.match(/\((.*?)\)/g)
+                for (let i = 0; i < images.length; i++) {
+                  const image = images[i];
+                  let exImage = image.match(/\((.*?)\)/);
+                  msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+                  msg = msg.replace('!', '')
+                  // msg = msg.replace(' - ', '<>&emsp</>')
+                }
               }
+              msg = msg.replace(/\n/g, '<br>')
               setMessage((previousMessage: any) => {
                 return [
                   ...previousMessage,
                   {
-                    content: msgs,
+                    content: msg,
                     sender: "agent",
                     sent_time: new Date(),
                   },
@@ -199,12 +230,12 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                         {message.fromUserId === 0 && (
                             <img className="" src="images/Image-1.png" alt="" />
                         )}
-                        {msg.sender === "customer" &&
+                        {/* {msg.sender === "customer" && */}
                         <div key={index} className={`message ${messageClass}`}>
-                            {msg.content}
+                            {ReactHtmlParser(msg.content)}
                         </div>
-                        }
-                        <div className={`chat_content_con` }>
+                        {/* } */}
+                        {/* <div className={`chat_content_con` }>
                           {msg.sender === "agent" &&
                             msg.content.map((msg: any, idx: number) => {
                               return(
@@ -216,7 +247,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                               )
                             })
                           }
-                        </div>
+                        </div> */}
                       </div>
                     </>
                 );

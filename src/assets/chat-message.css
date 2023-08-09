@@ -59,7 +59,7 @@ h2 {
   /* border-top: 1px solid #E6E5E8; */
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   background-color: white;
-
+  z-index: 400;
 }
 .message_box small {
   /* padding-top: 0.9rem; */
@@ -124,7 +124,7 @@ button {
   margin-bottom: 8rem !important;
 }
 .message-box img {
-  width: 2rem;
+  width: 100%;
     object-fit: cover;
   position: relative;
   z-index: 20;
