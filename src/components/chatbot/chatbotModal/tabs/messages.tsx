@@ -5,8 +5,8 @@ import "../../../../assets/chat-message.css";
 import Axios from "../../../../api";
 import io from "socket.io-client";
 import axios from 'axios';
-import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
-
+// import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
+// import parse from 'html-dom-parser'
 interface ChatProps {
     chatIdentifier: string,
     businessId: string | undefined,
@@ -90,7 +90,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               ...previousMessage,
               {
                 content: textMessage.trim(),
-                sender: "customer",
+                role: "customer",
                 sent_time: new Date(),
               },
             ];
@@ -117,12 +117,27 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             //   setTyping(false)
             //   scrollToBottom();
             // }
-            let url = `https://enif-gmail-integration-0b011ce2c83a.herokuapp.com/ai?prompt=${textMessage}`
-            const response = await axios({url: url, method: 'get'});
+            // let url = `http://localhost:3000/ai?prompt=${textMessage}`
+            // const response = await axios({url: url, method: 'get'});
+
+            let chatId = localStorage.getItem('chatId')
+            let data: any = {
+              businessId: "1f4eda6f-45c4-45e0-a1b3-0da460a88084315cb3bd-a1be-4d8a-97e9-4df59c0708d1", 
+              channel: "chat", 
+              customer: "Abdulazeez", 
+              promptMsg: textMessage.trim()
+            }
+            if(chatId){
+              data["chatId"] = chatId
+            }
+            let url = `https://web-production-1bfc.up.railway.app/ai/chat/send`
+            let response = await axios({url: url, method: 'post', data: data })
             
-            if (response.data.content) {
-              console.log(response.data.content.split('\n'));
-              // let contents = response.data.content.split('\n');
+            
+            if (response.data.message.content) {
+              localStorage.setItem('chatId', response.data.chatId)
+              console.log(response.data.message.content.split('\n'));
+              // let contents = response.data.message.content.split('\n');
               // let msgs: any[] = []
               // if(contents.length > 1){
               //   for (let i = 0; i < contents.length; i++) {
@@ -144,9 +159,9 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               // }
               // if(msgs.length == 0){
               //   let data: any = {}
-              //   let msg =response.data.content;
-              //   let name = response.data.content.match(/\[(.*?)\]/)
-              //   let image = response.data.content.match(/\((.*?)\)/)
+              //   let msg =response.data.message.content;
+              //   let name = response.data.message.content.match(/\[(.*?)\]/)
+              //   let image = response.data.message.content.match(/\((.*?)\)/)
                 
               //   if(name || image){
               //     msg = msg.replace(/\[(.*?)\]/g, '<br>')
@@ -163,19 +178,28 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               //   data['name'] = msg.replace(/\n/g, '<br>')
               //   msgs.push(data);
               // }
-              let msg =response.data.content;
-              let name = response.data.content.match(/\[(.*?)\]/)
-              let image = response.data.content.match(/\((.*?)\)/)
+              let msg =response.data.message.content;
+              let name = response.data.message.content.match(/\[(.*?)\]/)
+              let image = response.data.message.content.match(/\((.*?)\)/)
               
               if(name || image){
                 msg = msg.replace(/\[(.*?)\]/g, '<br>')
                 let images = msg.match(/\((.*?)\)/g)
-                for (let i = 0; i < images.length; i++) {
-                  const image = images[i];
-                  let exImage = image.match(/\((.*?)\)/);
-                  msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-                  msg = msg.replace('!', '')
-                  // msg = msg.replace(' - ', '<>&emsp</>')
+                if(images){
+                  for (let i = 0; i < images.length; i++) {
+                    const image = images[i];
+                    let exImage = image.match(/\((.*?)\)/);
+                    if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+                      msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+                      msg = msg.replace('!', '')
+                      // msg = msg.replace(' - ', '<>&emsp</>')
+                    }else{
+                      if(exImage[1].indexOf('http') > -1){
+                        msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                        msg = msg.replace('!', '')
+                      }
+                    }
+                  }
                 }
               }
               msg = msg.replace(/\n/g, '<br>')
@@ -184,7 +208,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                   ...previousMessage,
                   {
                     content: msg,
-                    sender: "agent",
+                    role: "agent",
                     sent_time: new Date(),
                   },
                 ];
@@ -219,24 +243,26 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                 {message.map((msg: any, index: number) => {
                 // return <></>
                 const messageBoxClass =
-                    msg.sender === "customer"
+                    msg.role === "customer"
                     ? "message-received"
                     : "message-sent";
                 const messageClass =
-                    msg.sender === "agent" ? "sent" : "received";
+                    msg.role === "agent" ? "sent" : "received";
                 return (
                     <>
                       <div key={index} className={`message-box ${messageBoxClass} ${(!typing && index == message.length-1) ? " magb" : ""}` } >
                         {message.fromUserId === 0 && (
                             <img className="" src="images/Image-1.png" alt="" />
                         )}
-                        {/* {msg.sender === "customer" && */}
-                        <div key={index} className={`message ${messageClass}`}>
-                            {ReactHtmlParser(msg.content)}
+                        {/* {msg.role === "customer" && */}
+                        <div key={index} className={`message ${messageClass}`}
+                          dangerouslySetInnerHTML={{__html: msg.content}}>
+
+                            {/* {parse(msg.content)} */}
                         </div>
                         {/* } */}
                         {/* <div className={`chat_content_con` }>
-                          {msg.sender === "agent" &&
+                          {msg.role === "agent" &&
                             msg.content.map((msg: any, idx: number) => {
                               return(
                                   <div className={`chat_content`}>
