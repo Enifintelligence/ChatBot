@@ -122,7 +122,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
             let chatId = localStorage.getItem('chatId')
             let data: any = {
-              businessId: "1f4eda6f-45c4-45e0-a1b3-0da460a88084315cb3bd-a1be-4d8a-97e9-4df59c0708d1", 
+              businessId: "de3c6940-f90a-48db-98b2-fe11c2ddc153a3bb5a4e-6c2e-4097-be31-ff390c9b76f6", 
               channel: "chat", 
               customer: "Abdulazeez", 
               promptMsg: textMessage.trim()
