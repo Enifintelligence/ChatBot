@@ -16,66 +16,116 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     // let { id: businessId } = useParams();
 
-    let id = props.businessId
+    // let id = props.businessId
+    let businessId = props.businessId
 
-
+    let serverUrl = "http://localhost:8000";
     const [message, setMessage] = useState<any>([]);
+    const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
     const [typing, setTyping] = useState(false);
     const [socket, setSocket] = useState<any>(null);
-    const fetchMessages = async () => {
-        try {
-        const response = await Axios.get(`get-conversation/${id}/${props.chatIdentifier}`);
-        setMessage(response.data.data);
-        } catch (error: any) {}
-    };
+    // const fetchMessages = async () => {
+    //     try {
+    //     const response = await Axios.get(`get-conversation/${id}/${props.chatIdentifier}`);
+    //     setMessage(response.data.data);
+    //     } catch (error: any) {}
+    // };
+
     useEffect(() => {
-        props.chatIdentifier && fetchMessages();
-    }, [props.chatIdentifier]);
-    
+      let id = localStorage.getItem('chatId')
+      id && setId(id)
+      console.log('sdfdsf')
+    })
+
     useEffect(() => {
-        if (props.chatIdentifier) {
-          // const newSocket = io("http://127.0.0.1:3009/", {
-          const newSocket = io("https://api.enif.ai", {
-            extraHeaders: {
-              Authorization: `${id}--${props.chatIdentifier}`,
-            },
-          });
-          // Add this code to handle the 'message' event
-          newSocket.on("message", (data) => {
-            console.log(data);
-            let newMessage = {
-              content: data.message,
-              sender: "agent",
-              sent_time: new Date(),
-            };
-            console.log({ data });
-            setMessage((previousMessages: any) => {
-              return [...previousMessages, newMessage];
-            });
-            // scrollToBottom();
-            // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-          });
+        // let id = localStorage.getItem('chatId')
+        id && reJoin(id);
+        console.log(id)
+    }, [id]);
     
-          newSocket.on("connect", () => {
-            console.log("Connected to socket server");
-            // newSocket.emit("hello", "Hello server!");
-          });
+    // useEffect(() => {
+    //     if (props.chatIdentifier) {
+    //       // const newSocket = io("http://127.0.0.1:3009/", {
+    //       const newSocket = io("https://api.enif.ai", {
+    //         extraHeaders: {
+    //           Authorization: `${id}--${props.chatIdentifier}`,
+    //         },
+    //       });
+    //       // Add this code to handle the 'message' event
+    //       newSocket.on("message", (data) => {
+    //         console.log(data);
+    //         let newMessage = {
+    //           content: data.message,
+    //           sender: "agent",
+    //           sent_time: new Date(),
+    //         };
+    //         console.log({ data });
+    //         setMessage((previousMessages: any) => {
+    //           return [...previousMessages, newMessage];
+    //         });
+    //         // scrollToBottom();
+    //         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+    //       });
     
-          newSocket.on("disconnect", () => {
-            console.log("Disconnected from socket server");
-          });
+    //       newSocket.on("connect", () => {
+    //         console.log("Connected to socket server");
+    //         // newSocket.emit("hello", "Hello server!");
+    //       });
     
-          // Save the socket instance to the state variable
-          setSocket(newSocket);
-          console.log(props.chatIdentifier);
+    //       newSocket.on("disconnect", () => {
+    //         console.log("Disconnected from socket server");
+    //       });
     
-          // Clean up the socket connection when the component unmounts
-          return () => {
-            newSocket.disconnect();
-          };
-        }
-    }, [props.chatIdentifier]);
+    //       // Save the socket instance to the state variable
+    //       setSocket(newSocket);
+    //       console.log(props.chatIdentifier);
+    
+    //       // Clean up the socket connection when the component unmounts
+    //       return () => {
+    //         newSocket.disconnect();
+    //       };
+    //     }
+    // }, [props.chatIdentifier]);
+
+    const initConnection = async (id:string) => {
+      const newSocket = io(serverUrl, {
+        extraHeaders: {
+          Authorization: `${id}`,
+        },
+      })
+
+      newSocket.on("message", (data) => {
+        let newMessage = {
+          content: data.message,
+          sender: "agent",
+          sent_time: new Date(),
+        };
+        console.log({ data });
+        setMessage((previousMessages: any) => {
+          return [...previousMessages, newMessage];
+        });
+        // scrollToBottom();
+        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      });
+
+      // newSocket.on("newmessage", (data) => {
+      //   console.log(data)
+      //   // scrollToBottom();
+      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      // });
+
+      newSocket.on("connect", () => {
+        console.log("Connected to socket server");
+        // socket.emit("hello", "Hello server!");
+      });
+
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from socket server");
+      });
+
+      setSocket(newSocket);
+    }
 
     const sendMessage = async () => {
         setTextMessage("");
@@ -83,7 +133,8 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
           setTyping(true)
           scrollToBottom();
         }, 3000)
-        emitMessage(props.chatIdentifier as string, id as string);
+        // emitMessage(props.chatIdentifier as string, id as string);
+
         try {
           setMessage((previousMessage: any) => {
             return [
@@ -122,20 +173,24 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
             let chatId = localStorage.getItem('chatId')
             let data: any = {
-              businessId: "de3c6940-f90a-48db-98b2-fe11c2ddc153a3bb5a4e-6c2e-4097-be31-ff390c9b76f6", 
+              businessId: businessId, 
               channel: "chat", 
               customer: "Abdulazeez", 
               promptMsg: textMessage.trim()
             }
             if(chatId){
-              data["chatId"] = chatId
+              data["chatId"] = chatId;
             }
             let url = `https://web-production-1bfc.up.railway.app/ai/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
             
-            
             if (response.data.message.content) {
               localStorage.setItem('chatId', response.data.chatId)
+              if(!chatId){
+                initConnection(response.data.chatId)
+              }else{
+                emitMessage(chatId as string, businessId as string);
+              }
               console.log(response.data.message.content.split('\n'));
               // let contents = response.data.message.content.split('\n');
               // let msgs: any[] = []
@@ -231,11 +286,55 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
     const emitMessage = (customerId: string, businessId: string) => {
         console.log(customerId, businessId);
         socket.emit("message", {
+          businessId: businessId,
           message: textMessage,
           customerIdentifier: customerId,
         });
     };
 
+    const reJoin = (id: string) => {
+      console.log(id)
+      const newSocket = io(serverUrl, {
+        extraHeaders: {
+          Authorization: `${id}`,
+        },
+      })
+
+      newSocket.on("message", (data) => {
+        let newMessage = {
+          content: data.message,
+          sender: "agent",
+          sent_time: new Date(),
+        };
+        console.log({ data });
+        setMessage((previousMessages: any) => {
+          return [...previousMessages, newMessage];
+        });
+        // scrollToBottom();
+        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      });
+
+      // newSocket.on("newmessage", (data) => {
+      //   console.log(data)
+      //   // scrollToBottom();
+      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      // });
+
+      newSocket.on("connect", () => {
+        console.log("Connected to socket server");
+        // socket.emit("hello", "Hello server!");
+      });
+
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from socket server");
+      });
+
+      newSocket.emit("user_joined", {
+        id: id,
+      });
+
+      setSocket(newSocket);
+    };
 
     return (
         <div className='chatbot_modal_messages_con'>
@@ -289,7 +388,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                   </div>
                 }
             </div>
-            {props.chatIdentifier && (
+            {/* {props.chatIdentifier && ( */}
                 <div className="message_box">
                 <div className="message_icons_left">
                     <textarea
@@ -304,7 +403,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                     <button onClick={() => sendMessage()}>Send</button>
                 </div>
                 </div>
-            )}
+            {/* )} */}
         </div>
     );
 }
