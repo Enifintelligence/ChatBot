@@ -175,7 +175,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             let data: any = {
               businessId: businessId, 
               channel: "chat", 
-              customer: "Abdulazeez", 
+              customer: props.chatIdentifier, 
               promptMsg: textMessage.trim()
             }
             if(chatId){
