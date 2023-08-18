@@ -32,15 +32,15 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           business_id: businessId,
         };
         try {
-          let response = await Axios.post(
-            `/start-conversation/${businessId}/`,
-            data
-          );
-          console.log("hello");
-          let { business_id, chat_identifier } = response?.data?.data;
-          console.log(business_id, chat_identifier);
+          // let response = await Axios.post(
+          //   `/start-conversation/${businessId}/`,
+          //   data
+          // );
+          // console.log("hello");
+          // let { business_id, chat_identifier } = response?.data?.data;
+          // console.log(business_id, chat_identifier);
           props.changeTab('message')
-          props.setChatIdentifier(chat_identifier)
+          props.setChatIdentifier(data.name)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };
