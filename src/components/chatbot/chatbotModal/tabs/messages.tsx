@@ -2,7 +2,6 @@ import { FC, useEffect, useState } from 'react';
 import '../chatBotModal.css';
 import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
-import Axios from "../../../../api";
 import io from "socket.io-client";
 import axios from 'axios';
 // import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
@@ -18,8 +17,8 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     // let id = props.businessId
     let businessId = props.businessId
-
-    let serverUrl = "http://localhost:8000";
+    // https://enif-business-production.up.railway.app
+    let serverUrl = "https://enif-business-production.up.railway.app";
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
@@ -181,7 +180,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             if(chatId){
               data["chatId"] = chatId;
             }
-            let url = `https://web-production-1bfc.up.railway.app/ai/chat/send`
+            let url = `${serverUrl}/api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
             
             if (response.data.message.content) {
@@ -301,15 +300,15 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
       })
 
       newSocket.on("message", (data) => {
-        let newMessage = {
-          content: data.message,
-          sender: "agent",
-          sent_time: new Date(),
-        };
-        console.log({ data });
-        setMessage((previousMessages: any) => {
-          return [...previousMessages, newMessage];
-        });
+        // let newMessage = {
+        //   content: data.message,
+        //   sender: "agent",
+        //   sent_time: new Date(),
+        // };
+        console.log(data);
+        // setMessage((previousMessages: any) => {
+        //   return [...previousMessages, newMessage];
+        // });
         // scrollToBottom();
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       });

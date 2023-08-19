@@ -1,0 +1,42 @@
+.help_container{
+    width: auto;
+    border-top: thin solid #dadce0;
+}
+
+.help_container:first-child{
+    border: none;
+}
+
+.help_container:first-child > .help_question{
+    border-top-left-radius: 0.625rem;
+    border-top-right-radius: 0.625rem;
+}
+
+.help_question{
+    padding: 10px;
+    background-color: #fff;
+    color: #202124;
+    height: 2rem;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 4px;
+    align-items: center;
+}
+
+.help_question > h4{
+    font-size: 14px;
+}
+
+.help_question > p{
+    font-size: 10px;
+}
+
+.help_answer{
+    padding: 5px 10px 10px;
+}
+
+.help_answer > p{
+    color: black;
+    font-size: 14px;
+    letter-spacing: 1px;
+}

@@ -3,6 +3,7 @@ import './chatBotModal.css';
 import HomeTab from './tabs/home';
 import Details from './tabs/datails';
 import Messages from './tabs/messages';
+import Help from './tabs/Help';
 
 interface ChatProps {
     changeTab: Function,
@@ -30,6 +31,9 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                 }
                 {props.tabOpen === 'message' &&
                     <Messages businessId={props.businessId} chatIdentifier={chatIdentifier} />
+                }
+                {props.tabOpen === 'help' &&
+                    <Help businessId={props.businessId} chatIdentifier={chatIdentifier} />
                 }
             </div>
             <div className='chatbot_modal_bottom'>
@@ -103,10 +107,12 @@ interface ChatPropsBottom {
         <div className='chatbot_modal_bottom_btn'
             onMouseEnter={() => handleHover(true)}
             onMouseLeave={() => handleHover(false)}
-            onClick={() => props.changeTab((props.tabOpen !== props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0) ? props.tab : props.tab === 'home' ? 'home' : 'details'))}
+            // onClick={() => props.changeTab((props.tabOpen !== props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0) ? props.tab : props.tab === 'home' ? 'home' : 'details'))}
+            onClick={() => props.changeTab( props.tab )}
         >
         {
-            props.tabOpen === props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0)
+            // props.tabOpen === props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0)
+            props.tabOpen === props.tab
             ?
             <lord-icon
                 src={props.src1}
