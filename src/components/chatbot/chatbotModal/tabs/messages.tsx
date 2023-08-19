@@ -18,7 +18,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
     // let id = props.businessId
     let businessId = props.businessId
     // https://enif-business-production.up.railway.app
-    let serverUrl = "https://enif-business-production.up.railway.app";
+    let serverUrl = "http://localhost:8000";
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
@@ -183,15 +183,15 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
             let url = `${serverUrl}/api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
             
-            if (response.data.message.content) {
+            if (response.data.reply.content) {
               localStorage.setItem('chatId', response.data.chatId)
               if(!chatId){
                 initConnection(response.data.chatId)
               }else{
                 emitMessage(chatId as string, businessId as string);
               }
-              console.log(response.data.message.content.split('\n'));
-              // let contents = response.data.message.content.split('\n');
+              console.log(response.data.reply.content.split('\n'));
+              // let contents = response.data.reply.content.split('\n');
               // let msgs: any[] = []
               // if(contents.length > 1){
               //   for (let i = 0; i < contents.length; i++) {
@@ -213,9 +213,9 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               // }
               // if(msgs.length == 0){
               //   let data: any = {}
-              //   let msg =response.data.message.content;
-              //   let name = response.data.message.content.match(/\[(.*?)\]/)
-              //   let image = response.data.message.content.match(/\((.*?)\)/)
+              //   let msg =response.data.reply.content;
+              //   let name = response.data.reply.content.match(/\[(.*?)\]/)
+              //   let image = response.data.reply.content.match(/\((.*?)\)/)
                 
               //   if(name || image){
               //     msg = msg.replace(/\[(.*?)\]/g, '<br>')
@@ -232,9 +232,9 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
               //   data['name'] = msg.replace(/\n/g, '<br>')
               //   msgs.push(data);
               // }
-              let msg =response.data.message.content;
-              let name = response.data.message.content.match(/\[(.*?)\]/)
-              let image = response.data.message.content.match(/\((.*?)\)/)
+              let msg =response.data.reply.content;
+              let name = response.data.reply.content.match(/\[(.*?)\]/)
+              let image = response.data.reply.content.match(/\((.*?)\)/)
               
               if(name || image){
                 msg = msg.replace(/\[(.*?)\]/g, '<br>')
