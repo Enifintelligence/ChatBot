@@ -13,7 +13,7 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
 
     let businessId = props.businessId
 
-    let serverUrl = "http://localhost:8000";
+    let serverUrl = "https://enif-business-production.up.railway.app";
     const [faqs, setFaqs] = useState<any>([]);
     const [show, setShow] = useState<any>();
 
