@@ -7,6 +7,10 @@
     border: none;
 }
 
+.help_container:last-child{
+    margin-bottom: 5rem;
+}
+
 .help_container:first-child > .help_question{
     border-top-left-radius: 0.625rem;
     border-top-right-radius: 0.625rem;
@@ -38,5 +42,5 @@
 .help_answer > p{
     color: black;
     font-size: 14px;
-    letter-spacing: 1px;
+    word-spacing: 2px;
 }

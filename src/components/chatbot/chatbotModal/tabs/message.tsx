@@ -97,6 +97,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             )
         }
         setMessage(prevMessages)
+        scrollToBottom()
     }
     
     // useEffect(() => {
