@@ -4,6 +4,7 @@ import HomeTab from './tabs/home';
 import Details from './tabs/datails';
 import Messages from './tabs/messages';
 import Help from './tabs/Help';
+import Message from './tabs/message';
 
 interface ChatProps {
     changeTab: Function,
@@ -12,7 +13,8 @@ interface ChatProps {
 }
 
 const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
-    const [chatIdentifier, setChatIdentifier] = useState('')
+    const [chatDetails, setChatDetails] = useState({})
+    const [messages, setMessages] = useState([])
 
     return (
       <div className="chatbot_modal_container">
@@ -27,13 +29,16 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     <HomeTab changeTab={props.changeTab} />
                 }
                 {props.tabOpen === 'details' &&
-                    <Details businessId={props.businessId} setChatIdentifier={setChatIdentifier} changeTab={props.changeTab} />
+                    <Details businessId={props.businessId} setChatDetails={setChatDetails} changeTab={props.changeTab} />
                 }
                 {props.tabOpen === 'message' &&
-                    <Messages businessId={props.businessId} chatIdentifier={chatIdentifier} />
+                    <Message businessId={props.businessId} chatDetails={chatDetails} messages={messages} />
+                }
+                {props.tabOpen === 'messages' &&
+                    <Messages businessId={props.businessId} setMessages={setMessages} chatDetails={chatDetails} changeTab={props.changeTab} />
                 }
                 {props.tabOpen === 'help' &&
-                    <Help businessId={props.businessId} chatIdentifier={chatIdentifier} />
+                    <Help businessId={props.businessId} chatDetails={chatDetails} />
                 }
             </div>
             <div className='chatbot_modal_bottom'>
@@ -43,7 +48,7 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     src2="https://cdn.lordicon.com/osuxyevn.json"
                     trigger="hover"
                     tabOpen={props.tabOpen}
-                    tab='home'
+                    tab={['home', 'details', 'message']}
                     text='Home'
                 />
                 <BottomIcon
@@ -52,9 +57,9 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     src2="https://cdn.lordicon.com/hpivxauj.json"
                     trigger="hover"
                     tabOpen={props.tabOpen}
-                    tab='message'
-                    text='Message'
-                    chatIdentifier={chatIdentifier}
+                    tab={['messages']}
+                    text='Messages'
+                    chatDetails={chatDetails}
                 />
                 <BottomIcon
                     changeTab={props.changeTab}
@@ -62,9 +67,9 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     src2="https://cdn.lordicon.com/enzmygww.json"
                     trigger="hover"
                     tabOpen={props.tabOpen}
-                    tab='help'
+                    tab={['help']}
                     text='Help'
-                    chatIdentifier={chatIdentifier}
+                    chatDetails={chatDetails}
                 />
                 <BottomIcon
                     changeTab={props.changeTab}
@@ -72,9 +77,9 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     src2="https://cdn.lordicon.com/psnhyobz.json"
                     trigger="hover"
                     tabOpen={props.tabOpen}
-                    tab='news'
+                    tab={['news']}
                     text='News'
-                    chatIdentifier={chatIdentifier}
+                    chatDetails={chatDetails}
                 />
             </div>
         </div>
@@ -87,12 +92,12 @@ export default ChatBotModal;
 interface ChatPropsBottom {
     changeTab: Function,
     tabOpen: string,
-    tab: string,
+    tab: any,
     src1: string, 
     src2: string, 
     trigger: any, 
     text: string, 
-    chatIdentifier?: string,
+    chatDetails?: any,
 }
 
  const BottomIcon:FC<ChatPropsBottom> = (props): JSX.Element =>{
@@ -107,12 +112,12 @@ interface ChatPropsBottom {
         <div className='chatbot_modal_bottom_btn'
             onMouseEnter={() => handleHover(true)}
             onMouseLeave={() => handleHover(false)}
-            // onClick={() => props.changeTab((props.tabOpen !== props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0) ? props.tab : props.tab === 'home' ? 'home' : 'details'))}
-            onClick={() => props.changeTab( props.tab )}
+            // onClick={() => props.changeTab((props.tabOpen !== props.tab && (props.chatDetails && props.chatDetails.length > 0) ? props.tab : props.tab === 'home' ? 'home' : 'details'))}
+            onClick={() => props.changeTab( props.tab[0] )}
         >
         {
-            // props.tabOpen === props.tab && (props.chatIdentifier && props.chatIdentifier.length > 0)
-            props.tabOpen === props.tab
+            // props.tabOpen === props.tab && (props.chatDetails && props.chatDetails.length > 0)
+            props.tab.includes(props.tabOpen)
             ?
             <lord-icon
                 src={props.src1}
@@ -126,7 +131,7 @@ interface ChatPropsBottom {
                 }}>
             </lord-icon>
             :
-            props.tab == props.tabOpen ?
+            props.tab.includes(props.tabOpen) ?
             <lord-icon
                 src={props.src1}
                 trigger="hover"

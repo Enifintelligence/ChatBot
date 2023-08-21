@@ -6,6 +6,20 @@ interface ChatProps {
 }
 
 const HomeTab:FC<ChatProps> = (props): JSX.Element =>{
+
+    const newChat = () => {
+        setCookie("email", '', -2)
+        setCookie("chatId", '', -2)
+        props.changeTab('details')
+    }
+
+    const setCookie = (cname: String, cvalue: String, exdays: number) => {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";";
+    }
+    
     return (
         <div className='chatbot_modal_middle_box'>
             <div className='chatbot_modal_middle_msgModal'>
@@ -24,7 +38,7 @@ const HomeTab:FC<ChatProps> = (props): JSX.Element =>{
                     </div>
                 </div>
 
-                <div onClick={() => props.changeTab('details')} className='chatbot_modal_middle_msgModal_btn'>
+                <div onClick={() => newChat()} className='chatbot_modal_middle_msgModal_btn'>
                     Start Chat
                 </div>
             </div>
@@ -39,6 +53,7 @@ const HomeTab:FC<ChatProps> = (props): JSX.Element =>{
                 <img src="/images/Send.png" className="live_chat_image" alt="" />
             </div> */}
         </div>
+
     );
 }
 
