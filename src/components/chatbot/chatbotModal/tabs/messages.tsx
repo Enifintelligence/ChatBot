@@ -68,7 +68,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
                     return(
                         <div key={index} className='help_container'>
                             <div onClick={() => handleSelectMessage(message)} className='help_question'>
-                                <h4>{message.customer} | {message.messages[0].content}</h4>
+                                <h4>{message.category ? message.category : "General Inquiries"} | {message.messages[0].content}</h4>
                                 <p>^</p>
                             </div>
                         </div>
