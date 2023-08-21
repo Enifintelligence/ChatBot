@@ -41,6 +41,7 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           // console.log(business_id, chat_identifier);
           props.changeTab('message')
           props.setChatDetails(data)
+          setCookie("email", data.customer_email, 2)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };
@@ -50,6 +51,13 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           return [...oldValue, value];
         });
     };
+
+    const setCookie = (cname: String, cvalue: String, exdays: number) => {
+      const d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      let expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";";
+    }
 
     return (
         <div className='chatbot_modal_middle_box'>
