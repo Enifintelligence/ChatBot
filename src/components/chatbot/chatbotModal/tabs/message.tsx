@@ -26,24 +26,22 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [typing, setTyping] = useState(false);
     const [socket, setSocket] = useState<any>(null);
 
-
     const fetchMessages = async (id: string) => {
         try {
         let url = `${serverUrl}/api/chat/conversation/${id}`
         axios({url: url, method: 'get' }).then(res => {
             setCookie("email", res.data.email, 2)
-            setMessage(res.data.messages)
+            formatMessages(res.data.messages)
         })
         } catch (error: any) {}
     };
 
     useEffect(() => {
-        props.chatDetails && setCookie("email", props.chatDetails.customer_email, 2);
+        props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
       let id = getCookie('chatId')
-      id && fetchMessages(id);
+      !props.messages && id && fetchMessages(id);
       id && setId(id)
-      props.messages && setMessage(props.messages)
-      console.log('sdfdsf')
+      props.messages && formatMessages(props.messages)
     }, [])
 
     useEffect(() => {
@@ -51,6 +49,55 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         id && reJoin(id);
         console.log(id)
     }, [id]);
+
+    const formatMessages = (messages: any) => {
+        let prevMessages = []
+        for(let i=0; i < messages.length; i++ ){
+            let message = messages[i]
+            if(message.role == "user"){
+                prevMessages.push({
+                    content: message.content.trim(),
+                    role: "user",
+                    sent_time: message.created_date,
+                })
+                continue
+            }
+
+            let msg = message.content;
+            let name = message.content.match(/\[(.*?)\]/)
+            let image = message.content.match(/\((.*?)\)/)
+            
+            if(name || image){
+            msg = msg.replace(/\[(.*?)\]/g, '<br>')
+            let images = msg.match(/\((.*?)\)/g)
+            if(images){
+                for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                let exImage = image.match(/\((.*?)\)/);
+                if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+                    msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+                    msg = msg.replace('!', '')
+                    // msg = msg.replace(' - ', '<>&emsp</>')
+                }else{
+                    if(exImage[1].indexOf('http') > -1){
+                    msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                    msg = msg.replace('!', '')
+                    }
+                }
+                }
+            }
+            }
+            msg = msg.replace(/\n/g, '<br>')
+            prevMessages.push(
+                {
+                    content: msg,
+                    role: "assistance",
+                    sent_time: message.created_date,
+                }
+            )
+        }
+        setMessage(prevMessages)
+    }
     
     // useEffect(() => {
     //     if (.name) {
