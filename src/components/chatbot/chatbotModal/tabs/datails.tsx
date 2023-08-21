@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 interface ChatProps {
     changeTab: Function,
-    setChatIdentifier: Function,
+    setChatDetails: Function,
     businessId: string | undefined,
 }
 
@@ -40,7 +40,7 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           // let { business_id, chat_identifier } = response?.data?.data;
           // console.log(business_id, chat_identifier);
           props.changeTab('message')
-          props.setChatIdentifier(data.name)
+          props.setChatDetails(data)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };

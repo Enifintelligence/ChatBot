@@ -5,7 +5,7 @@ import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
 import axios from 'axios';
 interface ChatProps {
-    chatIdentifier: string,
+    chatDetails: any,
     businessId: string | undefined,
 }
 
@@ -20,7 +20,7 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
     useEffect(() => {
         let url = `${serverUrl}/api/business/get/${businessId}`
         axios({url: url, method: 'get' }).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             setFaqs(res.data.knowledgeBase.faqs)
         })
     }, [])
