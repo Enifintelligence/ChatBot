@@ -4,12 +4,16 @@ import '../../../../assets/single-message.css'
 import { useForm } from 'react-hook-form';
 import Axios from "../../../../api";
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 interface ChatProps {
     changeTab: Function,
     setChatDetails: Function,
     businessId: string | undefined,
 }
+
+// https://enif-business-production.up.railway.app
+let serverUrl = "https://enif-business-production.up.railway.app";
 
 const Details:FC<ChatProps> = (props): JSX.Element =>{
     const {
@@ -39,9 +43,19 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           // console.log("hello");
           // let { business_id, chat_identifier } = response?.data?.data;
           // console.log(business_id, chat_identifier);
+          let reqdata: any = {
+            businessId: businessId, 
+            channel: "chat",
+            customer: data.name, 
+            email: data.customer_email, 
+          }
+          let url = `${serverUrl}/api/chat/new-chat`
+          let response = await axios({url: url, method: 'post', data: reqdata })
+          console.log(response)
           props.changeTab('message')
           props.setChatDetails(data)
           setCookie("email", data.customer_email, 2)
+          setCookie("chatId", response.data.chatId, 2)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };
