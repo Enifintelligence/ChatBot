@@ -19,7 +19,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     // let id = props.businessId
     let businessId = props.businessId
     // https://enif-business-production.up.railway.app
-    let serverUrl = "http://localhost:8000";
+    let serverUrl = "https://enif-business-production.up.railway.app";
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
@@ -340,7 +340,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             console.log(data)
             let newMessage = {
                 content: data.reply.content,
-                sender: "assistance",
+                role: "assistance",
                 sent_time: data.reply.created_date,
             };
             setMessage((previousMessages: any) => {
