@@ -63,6 +63,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 continue
             }
 
+            if(message.status === 'draft'){
+                continue
+            }
+
             let msg = message.content;
             let name = message.content.match(/\[(.*?)\]/)
             let image = message.content.match(/\((.*?)\)/)
@@ -151,25 +155,33 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         },
       })
 
-      newSocket.on("message", (data) => {
+    //   newSocket.on("message", (data) => {
+    //     let newMessage = {
+    //       content: data.message,
+    //       sender: "agent",
+    //       sent_time: new Date(),
+    //     };
+    //     console.log({ data });
+    //     setMessage((previousMessages: any) => {
+    //       return [...previousMessages, newMessage];
+    //     });
+    //     // scrollToBottom();
+    //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+    //   });
+
+      newSocket.on("newmessage", (data) => {
+        console.log(data)
         let newMessage = {
-          content: data.message,
-          sender: "agent",
-          sent_time: new Date(),
+            content: data.reply.content,
+            sender: "assistance",
+            sent_time: data.reply.created_date,
         };
-        console.log({ data });
         setMessage((previousMessages: any) => {
-          return [...previousMessages, newMessage];
+        return [...previousMessages, newMessage];
         });
         // scrollToBottom();
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       });
-
-      // newSocket.on("newmessage", (data) => {
-      //   console.log(data)
-      //   // scrollToBottom();
-      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-      // });
 
       newSocket.on("connect", () => {
         console.log("Connected to socket server");
@@ -188,10 +200,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         setCookie("email", props.chatDetails.customer_email, 2);
 
         setTextMessage("");
-        setTimeout(async () => {
-          setTyping(true)
-          scrollToBottom();
-        }, 3000)
+        // setTimeout(async () => {
+        //   setTyping(true)
+        //   scrollToBottom();
+        // }, 3000)
         // emitMessage(.name as string, id as string);
 
         try {
@@ -206,31 +218,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             ];
           });
           scrollToBottom();
-          setTimeout(async () => {
-            // const response = await Axios.post(`send-chat/` + id + "/" + .name, {
-            //   // const response = await Axios.post(`sendChat/` + id + "/" + .name, {
-            //   sender: "customer",
-            //   content: textMessage,
-            // });
-            
-            // if (response.data.success) {
-            //   // setMessage((previousMessage: any) => {
-            //   //   return [
-            //   //     ...previousMessage,
-            //   //     {
-            //   //       content: textMessage.trim(),
-            //   //       sender: "customer",
-            //   //       sent_time: new Date(),
-            //   //     },
-            //   //   ];
-            //   // });
-            //   setTyping(false)
-            //   scrollToBottom();
-            // }
-            // let url = `http://localhost:3000/ai?prompt=${textMessage}`
-            // const response = await axios({url: url, method: 'get'});
+        //   setTimeout(async () => {
 
-            // let chatId = localStorage.getItem('chatId')
             let chatId = getCookie('chatId')
             let email = getCookie('email')
             let data: any = {
@@ -245,7 +234,16 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             }
             let url = `${serverUrl}/api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
+
+            if(response.data.replyMode === 'supervised'){
+                setTyping(false)
+                return
+            }else if(response.data.replyMode === 'hybrid' && !response.data.reply){
+                setTyping(false)
+                return
+            }
             
+            setTyping(true)
             if (response.data.reply.content) {
               localStorage.setItem('chatId', response.data.chatId)
               setCookie("chatId", response.data.chatId, 2)
@@ -255,47 +253,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 emitMessage(chatId as string, businessId as string);
               }
               console.log(response.data.reply.content.split('\n'));
-              // let contents = response.data.reply.content.split('\n');
-              // let msgs: any[] = []
-              // if(contents.length > 1){
-              //   for (let i = 0; i < contents.length; i++) {
-              //     let data: any = {}
-              //     let name = contents[i].match(/\[(.*?)\]/)
-              //     let image = contents[i].match(/\((.*?)\)/)
-              //     if(name){
-              //       data['name'] = name[1];
-              //       if(image){
-              //         data['image'] = image[1];
-              //       }
-              //       msgs.push(data);
-              //     }
-              //   }
-              // }else{
-              //   let data: any = {}
-              //   data['name'] = contents[0]
-              //   msgs.push(data);
-              // }
-              // if(msgs.length == 0){
-              //   let data: any = {}
-              //   let msg =response.data.reply.content;
-              //   let name = response.data.reply.content.match(/\[(.*?)\]/)
-              //   let image = response.data.reply.content.match(/\((.*?)\)/)
-                
-              //   if(name || image){
-              //     msg = msg.replace(/\[(.*?)\]/g, '<br>')
-              //     let images = msg.match(/\((.*?)\)/g)
-              //     for (let i = 0; i < images.length; i++) {
-              //       const image = images[i];
-              //       let exImage = image.match(/\((.*?)\)/);
-              //       msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-              //       msg = msg.replace('!', '')
-              //       // msg = msg.replace(' - ', '<>&emsp</>')
-              //     }
-              //   }
-                
-              //   data['name'] = msg.replace(/\n/g, '<br>')
-              //   msgs.push(data);
-              // }
+
               let msg =response.data.reply.content;
               let name = response.data.reply.content.match(/\[(.*?)\]/)
               let image = response.data.reply.content.match(/\((.*?)\)/)
@@ -321,6 +279,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 }
               }
               msg = msg.replace(/\n/g, '<br>')
+              setTyping(false)
               setMessage((previousMessage: any) => {
                 return [
                   ...previousMessage,
@@ -334,7 +293,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               setTyping(false)
               scrollToBottom();
             }
-          }, 5000)
+        //   }, 5000)
         } catch (error: any) {}
     };
 
@@ -363,38 +322,46 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         },
       })
 
-      newSocket.on("message", (data) => {
-        // let newMessage = {
-        //   content: data.message,
-        //   sender: "agent",
-        //   sent_time: new Date(),
-        // };
-        console.log(data);
-        // setMessage((previousMessages: any) => {
-        //   return [...previousMessages, newMessage];
-        // });
-        // scrollToBottom();
-        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-      });
+    //   newSocket.on("message", (data) => {
+    //     // let newMessage = {
+    //     //   content: data.message,
+    //     //   sender: "agent",
+    //     //   sent_time: new Date(),
+    //     // };
+    //     console.log(data);
+    //     // setMessage((previousMessages: any) => {
+    //     //   return [...previousMessages, newMessage];
+    //     // });
+    //     // scrollToBottom();
+    //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+    //   });
 
-      // newSocket.on("newmessage", (data) => {
-      //   console.log(data)
-      //   // scrollToBottom();
-      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-      // });
+        newSocket.on("newmessage", (data) => {
+            console.log(data)
+            let newMessage = {
+                content: data.reply.content,
+                role: "assistance",
+                sent_time: data.reply.created_date,
+            };
+            setMessage((previousMessages: any) => {
+            return [...previousMessages, newMessage];
+            });
+            // scrollToBottom();
+            // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+        });
 
-      newSocket.on("connect", () => {
-        console.log("Connected to socket server");
-        // socket.emit("hello", "Hello server!");
-      });
+        newSocket.on("connect", () => {
+            console.log("Connected to socket server");
+            // socket.emit("hello", "Hello server!");
+        });
 
-      newSocket.on("disconnect", () => {
-        console.log("Disconnected from socket server");
-      });
+        newSocket.on("disconnect", () => {
+            console.log("Disconnected from socket server");
+        });
 
-      newSocket.emit("user_joined", {
-        id: id,
-      });
+        newSocket.emit("user_joined", {
+            id: id,
+        });
 
       setSocket(newSocket);
     };
