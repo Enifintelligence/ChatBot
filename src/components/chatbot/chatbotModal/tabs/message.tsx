@@ -179,7 +179,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         setMessage((previousMessages: any) => {
         return [...previousMessages, newMessage];
         });
-        // scrollToBottom();
+        scrollToBottom();
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       });
 
@@ -346,7 +346,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             setMessage((previousMessages: any) => {
             return [...previousMessages, newMessage];
             });
-            // scrollToBottom();
+            scrollToBottom();
             // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
         });
 

@@ -18,10 +18,10 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
     const [show, setShow] = useState<any>();
 
     useEffect(() => {
-        let url = `${serverUrl}/api/business/get/${businessId}`
+        let url = `${serverUrl}/api/business/get-faqs/${businessId}`
         axios({url: url, method: 'get' }).then(res => {
             // console.log(res.data)
-            setFaqs(res.data.knowledgeBase.faqs)
+            setFaqs(res.data)
         })
     }, [])
 
