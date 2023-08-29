@@ -68,7 +68,7 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     trigger="hover"
                     tabOpen={props.tabOpen}
                     tab={['help']}
-                    text='Help'
+                    text='Faqs'
                     chatDetails={chatDetails}
                 />
                 <BottomIcon
