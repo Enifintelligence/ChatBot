@@ -39,6 +39,7 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
                             <div className='help_answer'>
                                 <p>
                                     {faq.reply}
+                                    {faq.response}
                                 </p>
                             </div>
                             }
