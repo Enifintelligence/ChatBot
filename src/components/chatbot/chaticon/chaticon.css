@@ -1,0 +1,32 @@
+.chaticon_container{
+    justify-self: end;
+    display: flex;
+    width: 48px;
+    height: 48px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-radius: 50%;
+    background-color: #2000F0;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    padding: 0;
+    outline: 0;
+}
+
+.chaticon{
+    display: grid;
+    width: 100%;
+    height: 100%;
+    justify-items: center;
+    align-items: center;
+    transition: all .4s;
+}
+
+.chaticon_container_down{
+    transform: scale(0.7,0.7);
+}
+
+.chaticon_container:hover{
+    transform: scale(0.95,0.95);
+}

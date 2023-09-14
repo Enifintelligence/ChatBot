@@ -21,7 +21,7 @@ time, mark, audio, video {
 	padding: 0;
 	border: 0;
 	font-size: 100%;
-	font: inherit;
+	font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
@@ -216,7 +216,7 @@ a{
   optgroup,
   select,
   textarea {
-    font-family: inherit; /* 1 */
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* 1 */
     font-size: 100%; /* 1 */
     line-height: 1.15; /* 1 */
     margin: 0; /* 2 */
@@ -361,7 +361,7 @@ a{
   
   ::-webkit-file-upload-button {
     -webkit-appearance: button; /* 1 */
-    font: inherit; /* 2 */
+    font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* 2 */
   }
   
   /* Interactive
