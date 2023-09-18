@@ -55,7 +55,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
       if(message.email)
       setCookie("email", message.email, 2);
 
-      setCookie("chatId", message.chatId, 2)
+      setCookie("ticketId", message.ticketId, 2)
 
       props.setMessages(message.messages)
       props.changeTab('message')
