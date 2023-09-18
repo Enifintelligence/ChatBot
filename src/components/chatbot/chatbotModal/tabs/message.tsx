@@ -38,14 +38,14 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
 
     useEffect(() => {
         props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
-      let id = getCookie('chatId')
+      let id = getCookie('ticketId')
       !props.messages && id && fetchMessages(id);
       id && setId(id)
       props.messages && formatMessages(props.messages)
     }, [])
 
     useEffect(() => {
-        // let id = localStorage.getItem('chatId')
+        // let id = localStorage.getItem('ticketId')
         id && reJoin(id);
         console.log(id)
     }, [id]);
@@ -220,7 +220,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           scrollToBottom();
         //   setTimeout(async () => {
 
-            let chatId = getCookie('chatId')
+            let ticketId = getCookie('ticketId')
             let email = getCookie('email')
             let data: any = {
               businessId: businessId, 
@@ -229,8 +229,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               email: email, 
               promptMsg: textMessage.trim()
             }
-            if(chatId){
-              data["chatId"] = chatId;
+            if(ticketId){
+              data["ticketId"] = ticketId;
             }
             let url = `${serverUrl}/api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
@@ -245,12 +245,12 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             
             setTyping(true)
             if (response.data.reply.content) {
-              localStorage.setItem('chatId', response.data.chatId)
-              setCookie("chatId", response.data.chatId, 2)
-              if(!chatId){
-                initConnection(response.data.chatId)
+              localStorage.setItem('ticketId', response.data.ticketId)
+              setCookie("ticketId", response.data.ticketId, 2)
+              if(!ticketId){
+                initConnection(response.data.ticketId)
               }else{
-                emitMessage(chatId as string, businessId as string);
+                emitMessage(ticketId as string, businessId as string);
               }
               console.log(response.data.reply.content.split('\n'));
 
