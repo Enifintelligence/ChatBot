@@ -56,7 +56,7 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           props.changeTab('message')
           props.setChatDetails(data)
           setCookie("email", data.customer_email, 2)
-          setCookie("ticketId", response.data.ticketId, 2)
+          setCookie("ticketId", response.data.id, 2)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };
