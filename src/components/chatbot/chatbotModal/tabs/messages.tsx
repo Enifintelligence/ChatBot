@@ -24,7 +24,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
         let url = `${serverUrl}/api/chat/user/${email}`
         axios({url: url, method: 'get' }).then(res => {
             // console.log(res.data)
-            setMessages(res.data)
+            setMessages(res.data.ticket)
         })
     }, [])
 
@@ -55,7 +55,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
       if(message.email)
       setCookie("email", message.email, 2);
 
-      setCookie("ticketId", message.ticketId, 2)
+      setCookie("ticketId", message.id, 2)
 
       props.setMessages(message.messages)
       props.changeTab('message')

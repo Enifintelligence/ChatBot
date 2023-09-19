@@ -37,7 +37,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     useEffect(() => {
-        props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
+      props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
       let id = getCookie('ticketId')
       !props.messages && id && fetchMessages(id);
       id && setId(id)
