@@ -23,8 +23,10 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
         let email = getCookie('email')
         let url = `${serverUrl}/api/chat/user/${email}`
         axios({url: url, method: 'get' }).then(res => {
-            // console.log(res.data)
+            console.log(res.data)
             setMessages(res.data.ticket)
+        }).catch((err) => {
+          props.changeTab('details')
         })
     }, [])
 
@@ -57,8 +59,20 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
       setCookie("ticketId", message.id, 2)
 
-      props.setMessages(message.messages)
-      props.changeTab('message')
+      axios
+      .get(`${serverUrl}/api/chat/messages/${message.id}`)
+      .then((response) => {
+        console.log(response.data);
+        props.setMessages(response.data?.data);
+        props.changeTab('message')
+      })
+      .catch((error) => {
+        // if (error instanceof AxiosError) {
+        //   const errMessage = error.response?.data?.message;
+        //   setError(errMessage);
+        // }
+        // setIsLoading(false);
+      });
     }
 
     return (
