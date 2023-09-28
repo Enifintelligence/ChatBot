@@ -23,6 +23,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
+    const [agentName, setAgentName] = useState("");
     const [typing, setTyping] = useState(false);
     const [socket, setSocket] = useState<any>(null);
 
@@ -44,12 +45,18 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       !props.messages && id && fetchMessages(id);
       id && setId(id)
       props.messages && formatMessages(props.messages)
+
+      if(localStorage.getItem("agentName"))
+      setAgentName(localStorage.getItem("agentName") as string)
     }, [])
 
     useEffect(() => {
         // let id = localStorage.getItem('ticketId')
         id && reJoin(id);
-        console.log(id)
+        console.log(id);
+        if(localStorage.getItem("agentName"))
+        setAgentName(localStorage.getItem("agentName") as string)
+
     }, [id]);
 
     const formatMessages = (messages: any) => {
@@ -460,7 +467,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 })}
                 {typing &&
                   <div className="chat_bubble">
-                    Javis is typing
+                    <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
                     <div className="typing">
                       <div className="dot"></div>
                       <div className="dot"></div>

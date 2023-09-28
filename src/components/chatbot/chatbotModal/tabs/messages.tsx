@@ -59,6 +59,11 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
       setCookie("ticketId", message.id, 2)
 
+      localStorage.removeItem("agentName")
+
+      if(message.agentName)
+      localStorage.setItem("agentName", message.agentName)
+
       axios
       .get(`${serverUrl}/api/chat/messages/${message.id}`)
       .then((response) => {
