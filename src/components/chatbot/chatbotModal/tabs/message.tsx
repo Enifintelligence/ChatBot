@@ -46,16 +46,18 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       id && setId(id)
       props.messages && formatMessages(props.messages)
 
-      if(localStorage.getItem("agentName"))
-      setAgentName(localStorage.getItem("agentName") as string)
+      if(localStorage.getItem("agentName")){
+        setAgentName(localStorage.getItem("agentName") as string)
+      }
     }, [])
 
     useEffect(() => {
         // let id = localStorage.getItem('ticketId')
         id && reJoin(id);
         console.log(id);
-        if(localStorage.getItem("agentName"))
-        setAgentName(localStorage.getItem("agentName") as string)
+        if(localStorage.getItem("agentName")){
+          setAgentName(localStorage.getItem("agentName") as string)
+        }
 
     }, [id]);
 
@@ -212,7 +214,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         setCookie("email", props.chatDetails.customer_email, 2);
 
         setTextMessage("");
-        setTimeout(async () => {
+        setTimeout(() => {
           setTyping(true)
           scrollToBottom();
         }, 3000)
@@ -230,7 +232,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             ];
           });
           scrollToBottom();
-        //   setTimeout(async () => {
+          setTimeout(async () => {
 
             let ticketId = getCookie('ticketId')
             let email = getCookie('email')
@@ -307,7 +309,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             }else{
               setTyping(false)
             }
-        //   }, 5000)
+          }, 5000)
         } catch (error: any) {}
     };
 
