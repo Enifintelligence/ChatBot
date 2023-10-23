@@ -52,11 +52,15 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           }
           let url = `${serverUrl}/api/chat/new-chat`
           let response = await axios({url: url, method: 'post', data: reqdata })
-          console.log(response)
+          console.log(response.data.agentName)
+          
+          if(response.data.agentName)
+          localStorage.setItem("agentName", response.data.agentName)
+
           props.changeTab('message')
           props.setChatDetails(data)
           setCookie("email", data.customer_email, 2)
-          setCookie("ticketId", response.data.ticketId, 2)
+          setCookie("ticketId", response.data.id, 2)
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };

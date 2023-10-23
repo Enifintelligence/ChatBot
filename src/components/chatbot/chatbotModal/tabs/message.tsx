@@ -23,10 +23,12 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
+    const [agentName, setAgentName] = useState("");
     const [typing, setTyping] = useState(false);
     const [socket, setSocket] = useState<any>(null);
 
     const fetchMessages = async (id: string) => {
+      console.log("dfef")
         try {
         let url = `${serverUrl}/api/chat/conversation/${id}`
         axios({url: url, method: 'get' }).then(res => {
@@ -37,23 +39,33 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     useEffect(() => {
-        props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
+      console.log(props.messages)
+      props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
       let id = getCookie('ticketId')
       !props.messages && id && fetchMessages(id);
       id && setId(id)
       props.messages && formatMessages(props.messages)
+
+      if(localStorage.getItem("agentName")){
+        setAgentName(localStorage.getItem("agentName") as string)
+      }
     }, [])
 
     useEffect(() => {
         // let id = localStorage.getItem('ticketId')
         id && reJoin(id);
-        console.log(id)
+        console.log(id);
+        if(localStorage.getItem("agentName")){
+          setAgentName(localStorage.getItem("agentName") as string)
+        }
+
     }, [id]);
 
     const formatMessages = (messages: any) => {
         let prevMessages = []
         for(let i=0; i < messages.length; i++ ){
             let message = messages[i]
+            console.log(message)
             if(message.role == "user"){
                 prevMessages.push({
                     content: message.content.trim(),
@@ -64,41 +76,43 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             }
 
             if(message.status === 'draft'){
-                continue
+              continue
             }
-
-            let msg = message.content;
-            let name = message.content.match(/\[(.*?)\]/)
-            let image = message.content.match(/\((.*?)\)/)
             
-            if(name || image){
-            msg = msg.replace(/\[(.*?)\]/g, '<br>')
-            let images = msg.match(/\((.*?)\)/g)
-            if(images){
-                for (let i = 0; i < images.length; i++) {
-                const image = images[i];
-                let exImage = image.match(/\((.*?)\)/);
-                if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
-                    msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-                    msg = msg.replace('!', '')
-                    // msg = msg.replace(' - ', '<>&emsp</>')
-                }else{
-                    if(exImage[1].indexOf('http') > -1){
-                    msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
-                    msg = msg.replace('!', '')
-                    }
-                }
-                }
+            if(message.content){
+              let msg = message.content;
+              let name = message.content.match(/\[(.*?)\]/)
+              let image = message.content.match(/\((.*?)\)/)
+              
+              if(name || image){
+              msg = msg.replace(/\[(.*?)\]/g, '<br>')
+              let images = msg.match(/\((.*?)\)/g)
+              if(images){
+                  for (let i = 0; i < images.length; i++) {
+                  const image = images[i];
+                  let exImage = image.match(/\((.*?)\)/);
+                  if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+                      msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+                      msg = msg.replace('!', '')
+                      // msg = msg.replace(' - ', '<>&emsp</>')
+                  }else{
+                      if(exImage[1].indexOf('http') > -1){
+                      msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                      msg = msg.replace('!', '')
+                      }
+                  }
+                  }
+              }
+              }
+              msg = msg.replace(/\n/g, '<br>')
+              prevMessages.push(
+                  {
+                      content: msg,
+                      role: "assistance",
+                      sent_time: message.created_date,
+                  }
+              )
             }
-            }
-            msg = msg.replace(/\n/g, '<br>')
-            prevMessages.push(
-                {
-                    content: msg,
-                    role: "assistance",
-                    sent_time: message.created_date,
-                }
-            )
         }
         setMessage(prevMessages)
         scrollToBottom()
@@ -200,10 +214,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         setCookie("email", props.chatDetails.customer_email, 2);
 
         setTextMessage("");
-        // setTimeout(async () => {
-        //   setTyping(true)
-        //   scrollToBottom();
-        // }, 3000)
+        setTimeout(() => {
+          setTyping(true)
+          scrollToBottom();
+        }, 3000)
         // emitMessage(.name as string, id as string);
 
         try {
@@ -218,7 +232,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             ];
           });
           scrollToBottom();
-        //   setTimeout(async () => {
+          setTimeout(async () => {
 
             let ticketId = getCookie('ticketId')
             let email = getCookie('email')
@@ -243,7 +257,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 return
             }
             
-            setTyping(true)
+            // setTyping(true)
             if (response.data.reply.content) {
               localStorage.setItem('ticketId', response.data.ticketId)
               setCookie("ticketId", response.data.ticketId, 2)
@@ -292,8 +306,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               });
               setTyping(false)
               scrollToBottom();
+            }else{
+              setTyping(false)
             }
-        //   }, 5000)
+          }, 5000)
         } catch (error: any) {}
     };
 
@@ -389,7 +405,26 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       return "";
     }
 
+    const handleKeyDown = (event: any) => {
+      console.log('User pressed: ', event.key);
+  
+      if (event.key === 'Enter') {
+        // 👇️ your logic here
+        if(event.shiftKey)
+        {
+          console.log('shift enter was pressed');
+        }else{
+          event.preventDefault()
+          sendMessage()
+          console.log('Enter key pressed ✅');
+        }
+      }
+    };
 
+    const handleOnChange = (event: any) => {
+      console.log(event.target.value)
+      setTextMessage(event.target.value)
+    };
 
     return (
         <div className='chatbot_modal_messages_con'>
@@ -434,7 +469,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 })}
                 {typing &&
                   <div className="chat_bubble">
-                    Javis is typing
+                    <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
                     <div className="typing">
                       <div className="dot"></div>
                       <div className="dot"></div>
@@ -449,7 +484,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     <textarea
                     className="message_input"
                     value={textMessage}
-                    onChange={(e: any) => setTextMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    onChange={handleOnChange}
                     placeholder="Start a conversation"
                     />
                     <div className="icons"></div>
