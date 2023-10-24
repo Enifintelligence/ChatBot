@@ -50,7 +50,7 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
             email: data.customer_email, 
             phoneNo: data.phone_number
           }
-          let url = `${serverUrl}/api/chat/new-chat`
+          let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/new-chat`
           let response = await axios({url: url, method: 'post', data: reqdata })
           console.log(response.data.agentName)
           

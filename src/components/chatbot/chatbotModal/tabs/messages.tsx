@@ -21,7 +21,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     useEffect(() => {
         let email = getCookie('email')
-        let url = `${serverUrl}/api/chat/user/${email}`
+        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/user/${email}`
         axios({url: url, method: 'get' }).then(res => {
             console.log(res.data)
             setMessages(res.data.ticket)
@@ -65,7 +65,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
       localStorage.setItem("agentName", message.agentName)
 
       axios
-      .get(`${serverUrl}/api/chat/messages/${message.id}`)
+      .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/messages/${message.id}`)
       .then((response) => {
         console.log(response.data);
         props.setMessages(response.data?.data);
