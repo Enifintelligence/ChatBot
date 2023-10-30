@@ -130,6 +130,7 @@ button {
   z-index: 20;
 }
 .message-sent {
+  margin: .5rem 0;
 }
 .message-received {
   align-self: end;

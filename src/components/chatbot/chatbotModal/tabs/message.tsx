@@ -30,7 +30,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const fetchMessages = async (id: string) => {
       console.log("dfef")
         try {
-        let url = `${serverUrl}/api/chat/conversation/${id}`
+        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/conversation/${id}`
         axios({url: url, method: 'get' }).then(res => {
             setCookie("email", res.data.email, 2)
             formatMessages(res.data.messages)
@@ -246,7 +246,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             if(ticketId){
               data["ticketId"] = ticketId;
             }
-            let url = `${serverUrl}/api/chat/send`
+            let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
 
             if(response.data.replyMode === 'supervised'){
