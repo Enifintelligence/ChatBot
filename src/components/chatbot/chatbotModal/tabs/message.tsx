@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import '../chatBotModal.css';
 import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import axios from 'axios';
 // import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
 // import parse from 'html-dom-parser'
@@ -163,11 +163,11 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     // }, [.name]);
 
     const initConnection = async (id:string) => {
-      const newSocket = io(serverUrl, {
-        extraHeaders: {
-          Authorization: `${id}`,
-        },
-      })
+      // const newSocket = io(serverUrl, {
+      //   extraHeaders: {
+      //     Authorization: `${id}`,
+      //   },
+      // })
 
     //   newSocket.on("message", (data) => {
     //     let newMessage = {
@@ -183,8 +183,33 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
     //   });
 
-      newSocket.on("newmessage", (data) => {
-        console.log(data)
+      // newSocket.on("newmessage", (data) => {
+      //   console.log(data)
+      //   let newMessage = {
+      //       content: data.reply.content,
+      //       sender: "assistance",
+      //       sent_time: data.reply.created_date,
+      //   };
+      //   setMessage((previousMessages: any) => {
+      //   return [...previousMessages, newMessage];
+      //   });
+      //   scrollToBottom();
+      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      // });
+
+      // newSocket.on("connect", () => {
+      //   console.log("Connected to socket server");
+      //   // socket.emit("hello", "Hello server!");
+      // });
+
+      // newSocket.on("disconnect", () => {
+      //   console.log("Disconnected from socket server");
+      // });
+
+      // setSocket(newSocket);
+
+      const handleNewMessageEvent = (data: any) => {
+        //   console.log(data)
         let newMessage = {
             content: data.reply.content,
             sender: "assistance",
@@ -195,18 +220,29 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         });
         scrollToBottom();
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      }
+
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
+
+      socket.addEventListener('open', (event) => {
+        // WebSocket connection is open
+        console.log(event)
       });
 
-      newSocket.on("connect", () => {
-        console.log("Connected to socket server");
-        // socket.emit("hello", "Hello server!");
+      socket.addEventListener('message', (event) => {
+        // Handle incoming WebSocket messages
+        console.log(event.data)
+        if(event.data){
+          let parseData = JSON.parse(event.data);
+          if(parseData.event === "newmessage"){
+            handleNewMessageEvent(parseData.data)
+          }
+        }
       });
 
-      newSocket.on("disconnect", () => {
-        console.log("Disconnected from socket server");
+      socket.addEventListener('close', (event) => {
+        // WebSocket connection is closed
       });
-
-      setSocket(newSocket);
     }
 
     const sendMessage = async () => {
@@ -323,20 +359,20 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
 
     const emitMessage = (customerId: string, businessId: string) => {
         console.log(customerId, businessId);
-        socket.emit("message", {
-          businessId: businessId,
-          message: textMessage,
-          customerIdentifier: customerId,
-        });
+        // socket.emit("message", {
+        //   businessId: businessId,
+        //   message: textMessage,
+        //   customerIdentifier: customerId,
+        // });
     };
 
     const reJoin = (id: string) => {
       console.log(id)
-      const newSocket = io(serverUrl, {
-        extraHeaders: {
-          Authorization: `${id}`,
-        },
-      })
+      // const newSocket = io(serverUrl, {
+      //   extraHeaders: {
+      //     Authorization: `${id}`,
+      //   },
+      // })
 
     //   newSocket.on("message", (data) => {
     //     // let newMessage = {
@@ -352,34 +388,70 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
     //   });
 
-        newSocket.on("newmessage", (data) => {
-            console.log(data)
-            let newMessage = {
-                content: data.reply.content,
-                role: "assistance",
-                sent_time: data.reply.created_date,
-            };
-            setMessage((previousMessages: any) => {
-            return [...previousMessages, newMessage];
-            });
-            scrollToBottom();
-            // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-        });
+      //   newSocket.on("newmessage", (data) => {
+      //       console.log(data)
+      //       let newMessage = {
+      //           content: data.reply.content,
+      //           role: "assistance",
+      //           sent_time: data.reply.created_date,
+      //       };
+      //       setMessage((previousMessages: any) => {
+      //       return [...previousMessages, newMessage];
+      //       });
+      //       scrollToBottom();
+      //       // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      //   });
 
-        newSocket.on("connect", () => {
-            console.log("Connected to socket server");
-            // socket.emit("hello", "Hello server!");
-        });
+      //   newSocket.on("connect", () => {
+      //       console.log("Connected to socket server");
+      //       // socket.emit("hello", "Hello server!");
+      //   });
 
-        newSocket.on("disconnect", () => {
-            console.log("Disconnected from socket server");
-        });
+      //   newSocket.on("disconnect", () => {
+      //       console.log("Disconnected from socket server");
+      //   });
 
-        newSocket.emit("user_joined", {
-            id: id,
-        });
+      //   newSocket.emit("user_joined", {
+      //       id: id,
+      //   });
 
-      setSocket(newSocket);
+      // setSocket(newSocket);
+
+      const handleNewMessageEvent = (data: any) => {
+        //   console.log(data)
+        let newMessage = {
+            content: data.reply.content,
+            role: "assistance",
+            sent_time: data.reply.created_date,
+        };
+        setMessage((previousMessages: any) => {
+        return [...previousMessages, newMessage];
+        });
+        scrollToBottom();
+        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      }
+
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
+
+      socket.addEventListener('open', (event) => {
+        // WebSocket connection is open
+        console.log(event)
+      });
+
+      socket.addEventListener('message', (event) => {
+        // Handle incoming WebSocket messages
+        console.log(event.data)
+        if(event.data){
+          let parseData = JSON.parse(event.data);
+          if(parseData.event === "newmessage"){
+            handleNewMessageEvent(parseData.data)
+          }
+        }
+      });
+
+      socket.addEventListener('close', (event) => {
+        // WebSocket connection is closed
+      });
     };
 
     const setCookie = (cname: String, cvalue: String, exdays: number) => {
