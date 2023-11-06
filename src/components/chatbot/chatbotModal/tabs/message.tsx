@@ -25,7 +25,6 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [textMessage, setTextMessage] = useState("");
     const [agentName, setAgentName] = useState("");
     const [typing, setTyping] = useState(false);
-    const [socket, setSocket] = useState<any>(null);
 
     const fetchMessages = async (id: string) => {
       console.log("dfef")
@@ -70,7 +69,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                 prevMessages.push({
                     content: message.content.trim(),
                     role: "user",
-                    sent_time: message.created_date,
+                    sent_time: message.createdAt,
                 })
                 continue
             }
@@ -211,9 +210,9 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       const handleNewMessageEvent = (data: any) => {
         //   console.log(data)
         let newMessage = {
-            content: data.reply.content,
-            sender: "assistance",
-            sent_time: data.reply.created_date,
+          content: data.reply.content,
+          sender: "assistance",
+          sent_time: data.reply.created_date,
         };
         setMessage((previousMessages: any) => {
         return [...previousMessages, newMessage];
@@ -233,9 +232,15 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // Handle incoming WebSocket messages
         console.log(event.data)
         if(event.data){
+          let ticketId = getCookie('ticketId')
           let parseData = JSON.parse(event.data);
           if(parseData.event === "newmessage"){
             handleNewMessageEvent(parseData.data)
+          }
+          if(parseData.event === "responseMessage"){
+            setTimeout(() => {
+              handleResponse(parseData.data, ticketId);
+            }, 2000)
           }
         }
       });
@@ -285,66 +290,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
             let response = await axios({url: url, method: 'post', data: data })
 
-            if(response.data.replyMode === 'supervised'){
-                setTyping(false)
-                return
-            }else if(response.data.replyMode === 'hybrid' && !response.data.reply){
-                setTyping(false)
-                return
-            }
-            
-            // setTyping(true)
-            if (response.data.reply.content) {
-              localStorage.setItem('ticketId', response.data.ticketId)
-              setCookie("ticketId", response.data.ticketId, 2)
-              if(!ticketId){
-                initConnection(response.data.ticketId)
-              }else{
-                emitMessage(ticketId as string, businessId as string);
-              }
-              console.log(response.data.reply.content.split('\n'));
-
-              let msg =response.data.reply.content;
-              let name = response.data.reply.content.match(/\[(.*?)\]/)
-              let image = response.data.reply.content.match(/\((.*?)\)/)
-              
-              if(name || image){
-                msg = msg.replace(/\[(.*?)\]/g, '<br>')
-                let images = msg.match(/\((.*?)\)/g)
-                if(images){
-                  for (let i = 0; i < images.length; i++) {
-                    const image = images[i];
-                    let exImage = image.match(/\((.*?)\)/);
-                    if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
-                      msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-                      msg = msg.replace('!', '')
-                      // msg = msg.replace(' - ', '<>&emsp</>')
-                    }else{
-                      if(exImage[1].indexOf('http') > -1){
-                        msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
-                        msg = msg.replace('!', '')
-                      }
-                    }
-                  }
-                }
-              }
-              msg = msg.replace(/\n/g, '<br>')
-              setTyping(false)
-              setMessage((previousMessage: any) => {
-                return [
-                  ...previousMessage,
-                  {
-                    content: msg,
-                    role: "assistance",
-                    sent_time: new Date(),
-                  },
-                ];
-              });
-              setTyping(false)
-              scrollToBottom();
-            }else{
-              setTyping(false)
-            }
+            handleResponse(response.data, ticketId);
           }, 5000)
         } catch (error: any) {}
     };
@@ -356,6 +302,95 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           element.scrollTop = element.scrollHeight;
         });
     };
+
+    const handleResponse = (data: any, ticketId:any) => {
+      if(data.replyMode === 'supervised'){
+        setTyping(false)
+        return
+    }else if(data.replyMode === 'hybrid' && !data.reply){
+        setTyping(false)
+        return
+    }
+    
+    // setTyping(true)
+    if (data.reply.content) {
+      localStorage.setItem('ticketId', data.ticketId)
+      setCookie("ticketId", data.ticketId, 2)
+      if(!ticketId){
+        initConnection(data.ticketId)
+      }else{
+        emitMessage(ticketId as string, businessId as string);
+      }
+      console.log(data.reply.content.split('\n'));
+
+      let msg =data.reply.content;
+      let name = data.reply.content.match(/\[(.*?)\]/)
+      let image = data.reply.content.match(/\((.*?)\)/)
+      
+      if(name || image){
+        msg = msg.replace(/\[(.*?)\]/g, '<br>')
+        let images = msg.match(/\((.*?)\)/g)
+        if(images){
+          for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            let exImage = image.match(/\((.*?)\)/);
+            if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+              msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+              msg = msg.replace('!', '')
+              // msg = msg.replace(' - ', '<>&emsp</>')
+            }else{
+              if(exImage[1].indexOf('http') > -1){
+                msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                msg = msg.replace('!', '')
+              }
+            }
+          }
+        }
+      }
+      msg = msg.replace(/\n/g, '<br>')
+      setTyping(false)
+
+      // for(let i=0; i<message.length; i++){
+      //   let prevMsg = message[i]
+      //   console.log(prevMsg)
+      //   console.log(prevMsg!.content, msg)
+      //   if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+      //     console.log("true")
+      //   }
+      // }
+      setMessage((previousMessage: any) => {
+        console.log(previousMessage)
+        let found = false;
+        for(let i=0; i<previousMessage.length; i++){
+          let prevMsg = previousMessage[i]
+          console.log(prevMsg)
+          console.log(prevMsg!.content, msg)
+          if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+            console.log("true")
+            found = true;
+          }
+        }
+        if(found){
+          return [
+            ...previousMessage
+          ];
+        }else{
+          return [
+            ...previousMessage,
+            {
+              content: msg,
+              role: "assistance",
+              sent_time: data.reply.createdAt,
+            },
+          ];
+        }
+      });
+      setTyping(false)
+      scrollToBottom();
+    }else{
+      setTyping(false)
+    }
+    }
 
     const emitMessage = (customerId: string, businessId: string) => {
         console.log(customerId, businessId);
@@ -436,6 +471,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
         console.log(event)
+        console.log("WebSocket connection is open")
       });
 
       socket.addEventListener('message', (event) => {
@@ -443,14 +479,21 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         console.log(event.data)
         if(event.data){
           let parseData = JSON.parse(event.data);
+          let ticketId = getCookie('ticketId')
           if(parseData.event === "newmessage"){
             handleNewMessageEvent(parseData.data)
+          }
+          if(parseData.event === "responseMessage"){
+            setTimeout(() => {
+              handleResponse(parseData.data, ticketId);
+            }, 2000)
           }
         }
       });
 
       socket.addEventListener('close', (event) => {
         // WebSocket connection is closed
+      console.log("WebSocket connection is closed")
       });
     };
 
@@ -478,7 +521,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     }
 
     const handleKeyDown = (event: any) => {
-      console.log('User pressed: ', event.key);
+      // console.log('User pressed: ', event.key);
   
       if (event.key === 'Enter') {
         // 👇️ your logic here
@@ -494,7 +537,6 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     const handleOnChange = (event: any) => {
-      console.log(event.target.value)
       setTextMessage(event.target.value)
     };
 
