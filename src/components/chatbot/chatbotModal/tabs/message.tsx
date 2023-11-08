@@ -292,7 +292,9 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
 
             handleResponse(response.data, ticketId);
           }, 5000)
-        } catch (error: any) {}
+        } catch (error: any) {
+          setTyping(true)
+        }
     };
 
     const scrollToBottom = () => {
