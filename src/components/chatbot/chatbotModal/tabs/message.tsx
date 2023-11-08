@@ -300,7 +300,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           const element: any = document.querySelector(".chatbot_modal_messages");
           element.behavior = "smooth";
           element.scrollTop = element.scrollHeight;
-        });
+          console.log(element.scrollHeight)
+        }, 10);
     };
 
     const handleResponse = (data: any, ticketId:any) => {
