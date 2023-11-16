@@ -1,6 +1,6 @@
-import ChatIcon from './chaticon/icon.js';
+import ChatIcon from './chaticon/icon';
 import './chatbot.css';
-import ChatBotModal from './chatbotModal/chatBotModal.js';
+import ChatBotModal from './chatbotModal/chatBotModal';
 import { FC, useState } from 'react';
 
 interface ChatProps {

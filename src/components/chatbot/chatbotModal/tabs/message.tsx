@@ -90,7 +90,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                   for (let i = 0; i < images.length; i++) {
                   const image = images[i];
                   let exImage = image.match(/\((.*?)\)/);
-                  if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+                  if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
                       msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
                       msg = msg.replace('!', '')
                       // msg = msg.replace(' - ', '<>&emsp</>')
@@ -221,7 +221,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
 
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
@@ -337,7 +337,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           for (let i = 0; i < images.length; i++) {
             const image = images[i];
             let exImage = image.match(/\((.*?)\)/);
-            if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+            if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
               msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
               msg = msg.replace('!', '')
               // msg = msg.replace(' - ', '<>&emsp</>')
@@ -469,7 +469,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
 
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
