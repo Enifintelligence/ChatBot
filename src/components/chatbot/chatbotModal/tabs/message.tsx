@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import '../chatBotModal.css';
 import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import axios from 'axios';
 // import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
 // import parse from 'html-dom-parser'
@@ -13,6 +13,9 @@ interface ChatProps {
 }
 
 const Message:FC<ChatProps> = (props): JSX.Element =>{
+  const [socket, setSocket] = useState<any>()
+  const [image, setImage] = useState<any | null>(null);
+  const [imageURL, setImageURL] = useState<string>("");
 
     // let { id: businessId } = useParams();
 
@@ -25,7 +28,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [textMessage, setTextMessage] = useState("");
     const [agentName, setAgentName] = useState("");
     const [typing, setTyping] = useState(false);
-    const [socket, setSocket] = useState<any>(null);
+    const [businessTypingId, setBusinessTypingId] = useState<string>();
 
     const fetchMessages = async (id: string) => {
       console.log("dfef")
@@ -66,14 +69,14 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         for(let i=0; i < messages.length; i++ ){
             let message = messages[i]
             console.log(message)
-            if(message.role == "user"){
-                prevMessages.push({
-                    content: message.content.trim(),
-                    role: "user",
-                    sent_time: message.created_date,
-                })
-                continue
-            }
+            // if(message.role == "user"){
+            //     prevMessages.push({
+            //         content: message.content.trim(),
+            //         role: "user",
+            //         sent_time: message.createdAt,
+            //     })
+            //     continue
+            // }
 
             if(message.status === 'draft'){
               continue
@@ -91,7 +94,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                   for (let i = 0; i < images.length; i++) {
                   const image = images[i];
                   let exImage = image.match(/\((.*?)\)/);
-                  if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
+                  if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
                       msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
                       msg = msg.replace('!', '')
                       // msg = msg.replace(' - ', '<>&emsp</>')
@@ -108,7 +111,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               prevMessages.push(
                   {
                       content: msg,
-                      role: "assistance",
+                      role: message.role == "user" ? "user" : "assistance",
                       sent_time: message.created_date,
                   }
               )
@@ -163,11 +166,11 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     // }, [.name]);
 
     const initConnection = async (id:string) => {
-      const newSocket = io(serverUrl, {
-        extraHeaders: {
-          Authorization: `${id}`,
-        },
-      })
+      // const newSocket = io(serverUrl, {
+      //   extraHeaders: {
+      //     Authorization: `${id}`,
+      //   },
+      // })
 
     //   newSocket.on("message", (data) => {
     //     let newMessage = {
@@ -183,134 +186,166 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
     //   });
 
-      newSocket.on("newmessage", (data) => {
-        console.log(data)
+      // newSocket.on("newmessage", (data) => {
+      //   console.log(data)
+      //   let newMessage = {
+      //       content: data.reply.content,
+      //       sender: "assistance",
+      //       sent_time: data.reply.created_date,
+      //   };
+      //   setMessage((previousMessages: any) => {
+      //   return [...previousMessages, newMessage];
+      //   });
+      //   scrollToBottom();
+      //   // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      // });
+
+      // newSocket.on("connect", () => {
+      //   console.log("Connected to socket server");
+      //   // socket.emit("hello", "Hello server!");
+      // });
+
+      // newSocket.on("disconnect", () => {
+      //   console.log("Disconnected from socket server");
+      // });
+
+      // setSocket(newSocket);
+
+      const handleNewMessageEvent = (data: any) => {
+        //   console.log(data)
         let newMessage = {
-            content: data.reply.content,
-            sender: "assistance",
-            sent_time: data.reply.created_date,
+          content: data.reply.content,
+          sender: "assistance",
+          sent_time: data.reply.created_date,
         };
         setMessage((previousMessages: any) => {
         return [...previousMessages, newMessage];
         });
         scrollToBottom();
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      }
+
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      setSocket(socket);
+      socket.addEventListener('open', (event) => {
+        // WebSocket connection is open
+        console.log(event)
       });
 
-      newSocket.on("connect", () => {
-        console.log("Connected to socket server");
-        // socket.emit("hello", "Hello server!");
+      socket.addEventListener('message', (event) => {
+        // Handle incoming WebSocket messages
+        console.log(event.data)
+        if(event.data){
+          let ticketId = getCookie('ticketId')
+          let parseData = JSON.parse(event.data);
+          if(parseData.event === "newmessage"){
+            handleNewMessageEvent(parseData.data)
+          }
+          if(parseData.event === "responseMessage"){
+            setTimeout(() => {
+              handleResponse(parseData.data, ticketId);
+            }, 2000)
+          }
+
+          if(parseData.event === "businessTyping"){
+            if(parseData.data.typing){
+              setBusinessTypingId(parseData.data.businessId);
+            }else{
+              setBusinessTypingId("");
+            }
+            scrollToBottom()
+          }
+        }
       });
 
-      newSocket.on("disconnect", () => {
-        console.log("Disconnected from socket server");
+      socket.addEventListener('close', (event) => {
+        // WebSocket connection is closed
       });
-
-      setSocket(newSocket);
     }
 
     const sendMessage = async () => {
-        if(props.chatDetails.customer_email)
-        setCookie("email", props.chatDetails.customer_email, 2);
+      let msg = textMessage.trim()
+      let imageMsg
+      if(image){
+        var formData = new FormData();
+        formData.append('images', image)
+        let imageRes = await imageUpload(formData);
+        console.log(imageRes)
+        imageMsg = imageRes.data[0]
+        msg += ` (${imageMsg})`
+      }
+      console.log(msg)
+      if(msg.length <=0 ){
+        return
+      }
+      
+      if(props.chatDetails.customer_email)
+      setCookie("email", props.chatDetails.customer_email, 2);
 
-        setTextMessage("");
-        setTimeout(() => {
-          setTyping(true)
-          scrollToBottom();
-        }, 3000)
-        // emitMessage(.name as string, id as string);
+      setTextMessage("");
+      setImageURL("");
+      setImage(null)
+      setTimeout(() => {
+        setTyping(true)
+        scrollToBottom();
+      }, 3000)
+      // emitMessage(.name as string, id as string);
 
-        try {
-          setMessage((previousMessage: any) => {
-            return [
-              ...previousMessage,
-              {
-                content: textMessage.trim(),
-                role: "user",
-                sent_time: new Date(),
-              },
-            ];
-          });
-          scrollToBottom();
-          setTimeout(async () => {
+      try {
+        let text = msg
+        let image = msg.match(/\((.*?)\)/)
 
-            let ticketId = getCookie('ticketId')
-            let email = getCookie('email')
-            let data: any = {
-              businessId: businessId, 
-              channel: "chat", 
-              customer: props.chatDetails.name, 
-              email: email, 
-              promptMsg: textMessage.trim()
-            }
-            if(ticketId){
-              data["ticketId"] = ticketId;
-            }
-            let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
-            let response = await axios({url: url, method: 'post', data: data })
-
-            if(response.data.replyMode === 'supervised'){
-                setTyping(false)
-                return
-            }else if(response.data.replyMode === 'hybrid' && !response.data.reply){
-                setTyping(false)
-                return
-            }
-            
-            // setTyping(true)
-            if (response.data.reply.content) {
-              localStorage.setItem('ticketId', response.data.ticketId)
-              setCookie("ticketId", response.data.ticketId, 2)
-              if(!ticketId){
-                initConnection(response.data.ticketId)
-              }else{
-                emitMessage(ticketId as string, businessId as string);
-              }
-              console.log(response.data.reply.content.split('\n'));
-
-              let msg =response.data.reply.content;
-              let name = response.data.reply.content.match(/\[(.*?)\]/)
-              let image = response.data.reply.content.match(/\((.*?)\)/)
-              
-              if(name || image){
-                msg = msg.replace(/\[(.*?)\]/g, '<br>')
-                let images = msg.match(/\((.*?)\)/g)
-                if(images){
-                  for (let i = 0; i < images.length; i++) {
-                    const image = images[i];
-                    let exImage = image.match(/\((.*?)\)/);
-                    if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1){
-                      msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-                      msg = msg.replace('!', '')
-                      // msg = msg.replace(' - ', '<>&emsp</>')
-                    }else{
-                      if(exImage[1].indexOf('http') > -1){
-                        msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
-                        msg = msg.replace('!', '')
-                      }
-                    }
-                  }
-                }
-              }
-              msg = msg.replace(/\n/g, '<br>')
-              setTyping(false)
-              setMessage((previousMessage: any) => {
-                return [
-                  ...previousMessage,
-                  {
-                    content: msg,
-                    role: "assistance",
-                    sent_time: new Date(),
-                  },
-                ];
-              });
-              setTyping(false)
-              scrollToBottom();
+        if(image){
+          text = text.replace(/\[(.*?)\]/g, '<br>')
+          let image = text.match(/\((.*?)\)/)
+          
+          if(image){
+            if(image[1].lastIndexOf('.jpg') > -1 || image[1].lastIndexOf('.png') > -1 || image[1].lastIndexOf('.jpeg') > -1 || image[1].lastIndexOf('.gif') > -1 || image[1].lastIndexOf('.webp') > -1){
+              text = text.replace(image[0], `<br><img className="" src="${image[1]}" alt="product image" />`)
+              text = text.replace('!', '')
+              // text = text.replace(' - ', '<>&emsp</>')
             }else{
-              setTyping(false)
+              if(image[1].indexOf('http') > -1){
+                text = text.replace(image[0], `<a className="" href="${image[1]}" target='_blank' >Link</a> <br>`)
+                text = text.replace('!', '')
+              }
             }
-          }, 5000)
-        } catch (error: any) {}
+          }
+        }
+        
+        setMessage((previousMessage: any) => {
+          return [
+            ...previousMessage,
+            {
+              content: text,
+              role: "user",
+              sent_time: new Date(),
+            },
+          ];
+        });
+        scrollToBottom();
+        setTimeout(async () => {
+
+          let ticketId = getCookie('ticketId')
+          let email = getCookie('email')
+          let data: any = {
+            businessId: businessId, 
+            channel: "chat", 
+            customer: props.chatDetails.name, 
+            email: email, 
+            promptMsg: msg
+          }
+          if(ticketId){
+            data["ticketId"] = ticketId;
+          }
+          
+          let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
+          let response = await axios({url: url, method: 'post', data: data })
+          handleResponse(response.data, ticketId);
+        }, 5000)
+      } catch (error: any) {
+        setTyping(true)
+      }
     };
 
     const scrollToBottom = () => {
@@ -318,25 +353,115 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           const element: any = document.querySelector(".chatbot_modal_messages");
           element.behavior = "smooth";
           element.scrollTop = element.scrollHeight;
-        });
+          console.log(element.scrollHeight)
+        }, 10);
     };
+
+    const handleResponse = (data: any, ticketId:any) => {
+      if(data.replyMode === 'supervised'){
+        setTyping(false)
+        return
+    }else if(data.replyMode === 'hybrid' && !data.reply){
+        setTyping(false)
+        return
+    }
+    
+    // setTyping(true)
+    if (data.reply.content) {
+      localStorage.setItem('ticketId', data.ticketId)
+      setCookie("ticketId", data.ticketId, 2)
+      if(!ticketId){
+        initConnection(data.ticketId)
+      }else{
+        emitMessage(ticketId as string, businessId as string);
+      }
+      console.log(data.reply.content.split('\n'));
+
+      let msg =data.reply.content;
+      let name = data.reply.content.match(/\[(.*?)\]/)
+      let image = data.reply.content.match(/\((.*?)\)/)
+      
+      if(name || image){
+        msg = msg.replace(/\[(.*?)\]/g, '<br>')
+        let images = msg.match(/\((.*?)\)/g)
+        if(images){
+          for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            let exImage = image.match(/\((.*?)\)/);
+            if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
+              msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
+              msg = msg.replace('!', '')
+              // msg = msg.replace(' - ', '<>&emsp</>')
+            }else{
+              if(exImage[1].indexOf('http') > -1){
+                msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                msg = msg.replace('!', '')
+              }
+            }
+          }
+        }
+      }
+      msg = msg.replace(/\n/g, '<br>')
+      setTyping(false)
+
+      // for(let i=0; i<message.length; i++){
+      //   let prevMsg = message[i]
+      //   console.log(prevMsg)
+      //   console.log(prevMsg!.content, msg)
+      //   if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+      //     console.log("true")
+      //   }
+      // }
+      setMessage((previousMessage: any) => {
+        console.log(previousMessage)
+        let found = false;
+        for(let i=0; i<previousMessage.length; i++){
+          let prevMsg = previousMessage[i]
+          console.log(prevMsg)
+          console.log(prevMsg!.content, msg)
+          if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+            console.log("true")
+            found = true;
+          }
+        }
+        if(found){
+          return [
+            ...previousMessage
+          ];
+        }else{
+          return [
+            ...previousMessage,
+            {
+              content: msg,
+              role: "assistance",
+              sent_time: data.reply.createdAt,
+            },
+          ];
+        }
+      });
+      setTyping(false)
+      scrollToBottom();
+    }else{
+      setTyping(false)
+    }
+    }
 
     const emitMessage = (customerId: string, businessId: string) => {
         console.log(customerId, businessId);
-        socket.emit("message", {
-          businessId: businessId,
-          message: textMessage,
-          customerIdentifier: customerId,
-        });
+        // socket.emit("message", {
+        //   businessId: businessId,
+        //   message: textMessage,
+        //   customerIdentifier: customerId,
+        // });
     };
 
     const reJoin = (id: string) => {
       console.log(id)
-      const newSocket = io(serverUrl, {
-        extraHeaders: {
-          Authorization: `${id}`,
-        },
-      })
+      // const newSocket = io(serverUrl, {
+      //   extraHeaders: {
+      //     Authorization: `${id}`,
+      //   },
+      // })
 
     //   newSocket.on("message", (data) => {
     //     // let newMessage = {
@@ -352,34 +477,87 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     //     // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
     //   });
 
-        newSocket.on("newmessage", (data) => {
-            console.log(data)
-            let newMessage = {
-                content: data.reply.content,
-                role: "assistance",
-                sent_time: data.reply.created_date,
-            };
-            setMessage((previousMessages: any) => {
-            return [...previousMessages, newMessage];
-            });
-            scrollToBottom();
-            // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
-        });
+      //   newSocket.on("newmessage", (data) => {
+      //       console.log(data)
+      //       let newMessage = {
+      //           content: data.reply.content,
+      //           role: "assistance",
+      //           sent_time: data.reply.created_date,
+      //       };
+      //       setMessage((previousMessages: any) => {
+      //       return [...previousMessages, newMessage];
+      //       });
+      //       scrollToBottom();
+      //       // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      //   });
 
-        newSocket.on("connect", () => {
-            console.log("Connected to socket server");
-            // socket.emit("hello", "Hello server!");
-        });
+      //   newSocket.on("connect", () => {
+      //       console.log("Connected to socket server");
+      //       // socket.emit("hello", "Hello server!");
+      //   });
 
-        newSocket.on("disconnect", () => {
-            console.log("Disconnected from socket server");
-        });
+      //   newSocket.on("disconnect", () => {
+      //       console.log("Disconnected from socket server");
+      //   });
 
-        newSocket.emit("user_joined", {
-            id: id,
-        });
+      //   newSocket.emit("user_joined", {
+      //       id: id,
+      //   });
 
-      setSocket(newSocket);
+      // setSocket(newSocket);
+
+      const handleNewMessageEvent = (data: any) => {
+        //   console.log(data)
+        let newMessage = {
+            content: data.reply.content,
+            role: "assistance",
+            sent_time: data.reply.created_date,
+        };
+        setMessage((previousMessages: any) => {
+        return [...previousMessages, newMessage];
+        });
+        scrollToBottom();
+        // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
+      }
+
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      setSocket(socket);
+      socket.addEventListener('open', (event) => {
+        // WebSocket connection is open
+        console.log(event)
+        console.log("WebSocket connection is open")
+      });
+
+      socket.addEventListener('message', (event) => {
+        // Handle incoming WebSocket messages
+        console.log(event.data)
+        if(event.data){
+          let parseData = JSON.parse(event.data);
+          let ticketId = getCookie('ticketId')
+          if(parseData.event === "newmessage"){
+            handleNewMessageEvent(parseData.data)
+          }
+          if(parseData.event === "responseMessage"){
+            setTimeout(() => {
+              handleResponse(parseData.data, ticketId);
+            }, 2000)
+          }
+
+          if(parseData.event === "businessTyping"){
+            if(parseData.data.typing){
+              setBusinessTypingId(parseData.data.businessId);
+            }else{
+              setBusinessTypingId("");
+            }
+            scrollToBottom()
+          }
+        }
+      });
+
+      socket.addEventListener('close', (event) => {
+        // WebSocket connection is closed
+      console.log("WebSocket connection is closed")
+      });
     };
 
     const setCookie = (cname: String, cvalue: String, exdays: number) => {
@@ -406,7 +584,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     }
 
     const handleKeyDown = (event: any) => {
-      console.log('User pressed: ', event.key);
+      // console.log('User pressed: ', event.key);
   
       if (event.key === 'Enter') {
         // 👇️ your logic here
@@ -422,9 +600,61 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     const handleOnChange = (event: any) => {
-      console.log(event.target.value)
+      userTyping(event)
       setTextMessage(event.target.value)
     };
+
+    const userTyping = (event: any) => {
+      let ticketId = getCookie('ticketId')
+      const typingEvent = {
+        event: "userTyping",
+        data: {
+          businessId: props.businessId,
+          ticketId: ticketId,
+          typing: event.target.value.length > 0 ? true : false
+        },
+      };
+      socket.send(JSON.stringify(typingEvent))
+    }
+
+    const handleFileupload = (e: any) => {
+      if (e.target.files && e.target.files.length > 0) {
+        console.log(e.target.files)
+        setImage(e.target.files?.[0]);
+        let imageUrl = URL.createObjectURL(e.target.files[0])
+        setImageURL(imageUrl)
+      }
+    };
+
+    const fileUpload = () => {
+      const input = document.createElement("input");
+      input.accept = ".png,.jpeg,.jpg,.webp";
+      input.id = "inventory";
+      input.name = "inventory";
+      input.type = "file";
+      input.onchange = (ev) => handleFileupload(ev);
+      input.hidden = true;
+      input.click()
+    }
+
+    const imageUpload = async (formData: FormData) => {
+      if(formData){
+        // formData.append('images', image)
+        try{
+          const res = await axios.post(
+            `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/image/${businessId}`,
+            formData,
+          )
+          console.log(res.data)
+          return res.data
+        }catch(e){
+          console.log(e)
+          return e
+        }
+      }
+    }
+
+    const imageRef = useRef<HTMLInputElement | null>(null);
 
     return (
         <div className='chatbot_modal_messages_con'>
@@ -477,6 +707,16 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     </div>
                   </div>
                 }
+                {businessTypingId === businessId && !typing &&
+                  <div className="chat_bubble">
+                    <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
+                    <div className="typing">
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                    </div>
+                  </div>
+                }
             </div>
             {/* {.name && ( */}
                 <div className="message_box">
@@ -490,6 +730,29 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     />
                     <div className="icons"></div>
                 </div>
+                <div>
+                  <input
+                    type="file"
+                    ref={imageRef}
+                    onChange={handleFileupload}
+                    id={"file-upload"}
+                  />
+                </div>
+                {imageURL.length > 1 ?
+                <div className='image_uploaded'>
+                  <img src={imageURL} />
+                  <div onClick={() => {setImageURL(""); setImage(null)}} >x</div>
+                </div>
+                : 
+                <div
+                  className='upload_image'
+                  onClick={(e) => {
+                    fileUpload()
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+                </div>
+                }
                 <div className="button">
                     <button onClick={() => sendMessage()}>Send</button>
                 </div>
