@@ -338,6 +338,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           if(ticketId){
             data["ticketId"] = ticketId;
           }
+
+          userTyping(false)
           
           let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
           let response = await axios({url: url, method: 'post', data: data })
@@ -600,18 +602,18 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     const handleOnChange = (event: any) => {
-      userTyping(event)
+      // userTyping(event)
       setTextMessage(event.target.value)
     };
 
-    const userTyping = (event: any) => {
+    const userTyping = (isTyping: boolean) => {
       let ticketId = getCookie('ticketId')
       const typingEvent = {
         event: "userTyping",
         data: {
           businessId: props.businessId,
           ticketId: ticketId,
-          typing: event.target.value.length > 0 ? true : false
+          typing: isTyping
         },
       };
       socket.send(JSON.stringify(typingEvent))
@@ -726,6 +728,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     value={textMessage}
                     onKeyDown={handleKeyDown}
                     onChange={handleOnChange}
+                    onFocus={() => userTyping(true)}
+                    onBlur={() => userTyping(false)}
                     placeholder="Start a conversation"
                     />
                     <div className="icons"></div>
