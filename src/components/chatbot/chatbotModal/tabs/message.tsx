@@ -264,6 +264,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     }
 
     const sendMessage = async () => {
+      userTyping(false)
       let msg = textMessage.trim()
       let imageMsg
       if(image){
@@ -339,7 +340,6 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             data["ticketId"] = ticketId;
           }
 
-          userTyping(false)
           
           let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
           let response = await axios({url: url, method: 'post', data: data })
