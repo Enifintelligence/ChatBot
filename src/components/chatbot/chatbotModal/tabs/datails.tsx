@@ -13,7 +13,7 @@ interface ChatProps {
 }
 
 // https://enif-business-production.up.railway.app
-let serverUrl = import.meta.env.VITE_API_BASE_URL;
+let serverUrl = "https://app.enif.ai";
 
 const Details:FC<ChatProps> = (props): JSX.Element =>{
     const {

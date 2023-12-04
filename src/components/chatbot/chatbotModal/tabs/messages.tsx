@@ -16,7 +16,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     // let businessId = props.businessId
 
-    let serverUrl = import.meta.env.VITE_API_BASE_URL;
+    let serverUrl = "https://app.enif.ai";
     const [messages, setMessages] = useState<any>([]);
 
     useEffect(() => {

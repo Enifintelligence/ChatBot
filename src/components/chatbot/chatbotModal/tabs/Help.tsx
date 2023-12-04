@@ -13,7 +13,7 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
 
     let businessId = props.businessId
 
-    let serverUrl = import.meta.env.VITE_API_BASE_URL;
+    let serverUrl = "https://app.enif.ai";
     const [faqs, setFaqs] = useState<any>([]);
     const [show, setShow] = useState<any>();
 
