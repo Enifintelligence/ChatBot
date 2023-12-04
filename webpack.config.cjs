@@ -5,6 +5,8 @@ module.exports = {
     entry: './src/widgetstandalone.js',
     output: {
         filename: 'enif-standalone-script.js',
+        library: 'enif',
+        libraryTarget: 'umd',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
