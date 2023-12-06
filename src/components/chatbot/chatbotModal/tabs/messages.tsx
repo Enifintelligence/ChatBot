@@ -16,7 +16,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     // let businessId = props.businessId
 
-    let serverUrl = "https://app.enif.ai";
+    let serverUrl = "https://test.enif.ai";
     const [messages, setMessages] = useState<any>([]);
 
     useEffect(() => {

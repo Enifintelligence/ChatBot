@@ -13,7 +13,7 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
 
     let businessId = props.businessId
 
-    let serverUrl = "https://app.enif.ai";
+    let serverUrl = "https://test.enif.ai";
     const [faqs, setFaqs] = useState<any>([]);
     const [show, setShow] = useState<any>();
 
