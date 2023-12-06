@@ -37,8 +37,9 @@ const Help:FC<ChatProps> = (props): JSX.Element =>{
                             </div>
                             {show == index &&
                             <div className='help_answer'>
-                                <p dangerouslySetInnerHTML={{__html: faq.response.replaceAll("\n", "<br>")}}>
-                                    
+                                <p>
+                                    {faq.reply}
+                                    {faq.response}
                                 </p>
                             </div>
                             }
