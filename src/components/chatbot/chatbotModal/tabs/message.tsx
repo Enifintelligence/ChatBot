@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import '../chatBotModal.css';
 import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
@@ -13,6 +13,9 @@ interface ChatProps {
 }
 
 const Message:FC<ChatProps> = (props): JSX.Element =>{
+  const [socket, setSocket] = useState<any>()
+  const [image, setImage] = useState<any | null>(null);
+  const [imageURL, setImageURL] = useState<string>("");
 
     // let { id: businessId } = useParams();
 
@@ -25,6 +28,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const [textMessage, setTextMessage] = useState("");
     const [agentName, setAgentName] = useState("");
     const [typing, setTyping] = useState(false);
+    const [businessTypingId, setBusinessTypingId] = useState<string>();
 
     const fetchMessages = async (id: string) => {
       console.log("dfef")
@@ -65,14 +69,14 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         for(let i=0; i < messages.length; i++ ){
             let message = messages[i]
             console.log(message)
-            if(message.role == "user"){
-                prevMessages.push({
-                    content: message.content.trim(),
-                    role: "user",
-                    sent_time: message.createdAt,
-                })
-                continue
-            }
+            // if(message.role == "user"){
+            //     prevMessages.push({
+            //         content: message.content.trim(),
+            //         role: "user",
+            //         sent_time: message.createdAt,
+            //     })
+            //     continue
+            // }
 
             if(message.status === 'draft'){
               continue
@@ -107,7 +111,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               prevMessages.push(
                   {
                       content: msg,
-                      role: "assistance",
+                      role: message.role == "user" ? "user" : "assistance",
                       sent_time: message.created_date,
                   }
               )
@@ -221,8 +225,8 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
-
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      setSocket(socket);
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
         console.log(event)
@@ -242,6 +246,15 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
               handleResponse(parseData.data, ticketId);
             }, 2000)
           }
+
+          if(parseData.event === "businessTyping"){
+            if(parseData.data.typing){
+              setBusinessTypingId(parseData.data.businessId);
+            }else{
+              setBusinessTypingId("");
+            }
+            scrollToBottom()
+          }
         }
       });
 
@@ -251,50 +264,90 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     }
 
     const sendMessage = async () => {
-        if(props.chatDetails.customer_email)
-        setCookie("email", props.chatDetails.customer_email, 2);
+      userTyping(false)
+      let msg = textMessage.trim()
+      let imageMsg
+      if(image){
+        var formData = new FormData();
+        formData.append('images', image)
+        let imageRes = await imageUpload(formData);
+        console.log(imageRes)
+        imageMsg = imageRes.data[0]
+        msg += ` (${imageMsg})`
+      }
+      console.log(msg)
+      if(msg.length <=0 ){
+        return
+      }
+      
+      if(props.chatDetails.customer_email)
+      setCookie("email", props.chatDetails.customer_email, 2);
 
-        setTextMessage("");
-        setTimeout(() => {
-          setTyping(true)
-          scrollToBottom();
-        }, 3000)
-        // emitMessage(.name as string, id as string);
+      setTextMessage("");
+      setImageURL("");
+      setImage(null)
+      setTimeout(() => {
+        setTyping(true)
+        scrollToBottom();
+      }, 3000)
+      // emitMessage(.name as string, id as string);
 
-        try {
-          setMessage((previousMessage: any) => {
-            return [
-              ...previousMessage,
-              {
-                content: textMessage.trim(),
-                role: "user",
-                sent_time: new Date(),
-              },
-            ];
-          });
-          scrollToBottom();
-          setTimeout(async () => {
+      try {
+        let text = msg
+        let image = msg.match(/\((.*?)\)/)
 
-            let ticketId = getCookie('ticketId')
-            let email = getCookie('email')
-            let data: any = {
-              businessId: businessId, 
-              channel: "chat", 
-              customer: props.chatDetails.name, 
-              email: email, 
-              promptMsg: textMessage.trim()
+        if(image){
+          text = text.replace(/\[(.*?)\]/g, '<br>')
+          let image = text.match(/\((.*?)\)/)
+          
+          if(image){
+            if(image[1].lastIndexOf('.jpg') > -1 || image[1].lastIndexOf('.png') > -1 || image[1].lastIndexOf('.jpeg') > -1 || image[1].lastIndexOf('.gif') > -1 || image[1].lastIndexOf('.webp') > -1){
+              text = text.replace(image[0], `<br><img className="" src="${image[1]}" alt="product image" />`)
+              text = text.replace('!', '')
+              // text = text.replace(' - ', '<>&emsp</>')
+            }else{
+              if(image[1].indexOf('http') > -1){
+                text = text.replace(image[0], `<a className="" href="${image[1]}" target='_blank' >Link</a> <br>`)
+                text = text.replace('!', '')
+              }
             }
-            if(ticketId){
-              data["ticketId"] = ticketId;
-            }
-            let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
-            let response = await axios({url: url, method: 'post', data: data })
-
-            handleResponse(response.data, ticketId);
-          }, 5000)
-        } catch (error: any) {
-          setTyping(true)
+          }
         }
+        
+        setMessage((previousMessage: any) => {
+          return [
+            ...previousMessage,
+            {
+              content: text,
+              role: "user",
+              sent_time: new Date(),
+            },
+          ];
+        });
+        scrollToBottom();
+        setTimeout(async () => {
+
+          let ticketId = getCookie('ticketId')
+          let email = getCookie('email')
+          let data: any = {
+            businessId: businessId, 
+            channel: "chat", 
+            customer: props.chatDetails.name, 
+            email: email, 
+            promptMsg: msg
+          }
+          if(ticketId){
+            data["ticketId"] = ticketId;
+          }
+
+          
+          let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/send`
+          let response = await axios({url: url, method: 'post', data: data })
+          handleResponse(response.data, ticketId);
+        }, 5000)
+      } catch (error: any) {
+        setTyping(true)
+      }
     };
 
     const scrollToBottom = () => {
@@ -469,7 +522,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
 
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
@@ -490,6 +543,15 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
             setTimeout(() => {
               handleResponse(parseData.data, ticketId);
             }, 2000)
+          }
+
+          if(parseData.event === "businessTyping"){
+            if(parseData.data.typing){
+              setBusinessTypingId(parseData.data.businessId);
+            }else{
+              setBusinessTypingId("");
+            }
+            scrollToBottom()
           }
         }
       });
@@ -540,8 +602,61 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     };
 
     const handleOnChange = (event: any) => {
+      // userTyping(event)
       setTextMessage(event.target.value)
     };
+
+    const userTyping = (isTyping: boolean) => {
+      let ticketId = getCookie('ticketId')
+      const typingEvent = {
+        event: "userTyping",
+        data: {
+          businessId: props.businessId,
+          ticketId: ticketId,
+          typing: isTyping
+        },
+      };
+      socket.send(JSON.stringify(typingEvent))
+    }
+
+    const handleFileupload = (e: any) => {
+      if (e.target.files && e.target.files.length > 0) {
+        console.log(e.target.files)
+        setImage(e.target.files?.[0]);
+        let imageUrl = URL.createObjectURL(e.target.files[0])
+        setImageURL(imageUrl)
+      }
+    };
+
+    const fileUpload = () => {
+      const input = document.createElement("input");
+      input.accept = ".png,.jpeg,.jpg,.webp";
+      input.id = "inventory";
+      input.name = "inventory";
+      input.type = "file";
+      input.onchange = (ev) => handleFileupload(ev);
+      input.hidden = true;
+      input.click()
+    }
+
+    const imageUpload = async (formData: FormData) => {
+      if(formData){
+        // formData.append('images', image)
+        try{
+          const res = await axios.post(
+            `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/image/${businessId}`,
+            formData,
+          )
+          console.log(res.data)
+          return res.data
+        }catch(e){
+          console.log(e)
+          return e
+        }
+      }
+    }
+
+    const imageRef = useRef<HTMLInputElement | null>(null);
 
     return (
         <div className='chatbot_modal_messages_con'>
@@ -594,6 +709,16 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     </div>
                   </div>
                 }
+                {businessTypingId === businessId && !typing &&
+                  <div className="chat_bubble">
+                    <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
+                    <div className="typing">
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                    </div>
+                  </div>
+                }
             </div>
             {/* {.name && ( */}
                 <div className="message_box">
@@ -603,10 +728,35 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     value={textMessage}
                     onKeyDown={handleKeyDown}
                     onChange={handleOnChange}
+                    onFocus={() => userTyping(true)}
+                    onBlur={() => userTyping(false)}
                     placeholder="Start a conversation"
                     />
                     <div className="icons"></div>
                 </div>
+                <div>
+                  <input
+                    type="file"
+                    ref={imageRef}
+                    onChange={handleFileupload}
+                    id={"file-upload"}
+                  />
+                </div>
+                {imageURL.length > 1 ?
+                <div className='image_uploaded'>
+                  <img src={imageURL} />
+                  <div onClick={() => {setImageURL(""); setImage(null)}} >x</div>
+                </div>
+                : 
+                <div
+                  className='upload_image'
+                  onClick={(e) => {
+                    fileUpload()
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+                </div>
+                }
                 <div className="button">
                     <button onClick={() => sendMessage()}>Send</button>
                 </div>
