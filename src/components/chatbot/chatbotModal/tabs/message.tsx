@@ -310,89 +310,89 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       if(data.replyMode === 'supervised'){
         setTyping(false)
         return
-    }else if(data.replyMode === 'hybrid' && !data.reply){
-        setTyping(false)
-        return
-    }
-    
-    // setTyping(true)
-    if (data.reply.content) {
-      localStorage.setItem('ticketId', data.ticketId)
-      setCookie("ticketId", data.ticketId, 2)
-      if(!ticketId){
-        initConnection(data.ticketId)
-      }else{
-        emitMessage(ticketId as string, businessId as string);
+      }else if(data.replyMode === 'hybrid' && !data.reply){
+          setTyping(false)
+          return
       }
-      console.log(data.reply.content.split('\n'));
-
-      let msg =data.reply.content;
-      let name = data.reply.content.match(/\[(.*?)\]/)
-      let image = data.reply.content.match(/\((.*?)\)/)
       
-      if(name || image){
-        msg = msg.replace(/\[(.*?)\]/g, '<br>')
-        let images = msg.match(/\((.*?)\)/g)
-        if(images){
-          for (let i = 0; i < images.length; i++) {
-            const image = images[i];
-            let exImage = image.match(/\((.*?)\)/);
-            if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
-              msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
-              msg = msg.replace('!', '')
-              // msg = msg.replace(' - ', '<>&emsp</>')
-            }else{
-              if(exImage[1].indexOf('http') > -1){
-                msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+      // setTyping(true)
+      if (data.reply) {
+        localStorage.setItem('ticketId', data.ticketId)
+        setCookie("ticketId", data.ticketId, 2)
+        if(!ticketId){
+          initConnection(data.ticketId)
+        }else{
+          emitMessage(ticketId as string, businessId as string);
+        }
+        console.log(data.reply.content.split('\n'));
+
+        let msg =data.reply.content;
+        let name = data.reply.content.match(/\[(.*?)\]/)
+        let image = data.reply.content.match(/\((.*?)\)/)
+        
+        if(name || image){
+          msg = msg.replace(/\[(.*?)\]/g, '<br>')
+          let images = msg.match(/\((.*?)\)/g)
+          if(images){
+            for (let i = 0; i < images.length; i++) {
+              const image = images[i];
+              let exImage = image.match(/\((.*?)\)/);
+              if(exImage[1].lastIndexOf('.jpg') > -1 || exImage[1].lastIndexOf('.png') > -1 || exImage[1].lastIndexOf('.jpeg') > -1 || exImage[1].lastIndexOf('.gif') > -1 || exImage[1].lastIndexOf('.webp') > -1){
+                msg = msg.replace(exImage[0], `<br><img className="" src="${exImage[1]}" alt="product image" />`)
                 msg = msg.replace('!', '')
+                // msg = msg.replace(' - ', '<>&emsp</>')
+              }else{
+                if(exImage[1].indexOf('http') > -1){
+                  msg = msg.replace(exImage[0], `<a className="" href="${exImage[1]}" target='_blank' >Link</a> <br>`)
+                  msg = msg.replace('!', '')
+                }
               }
             }
           }
         }
-      }
-      msg = msg.replace(/\n/g, '<br>')
-      setTyping(false)
+        msg = msg.replace(/\n/g, '<br>')
+        setTyping(false)
 
-      // for(let i=0; i<message.length; i++){
-      //   let prevMsg = message[i]
-      //   console.log(prevMsg)
-      //   console.log(prevMsg!.content, msg)
-      //   if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
-      //     console.log("true")
-      //   }
-      // }
-      setMessage((previousMessage: any) => {
-        console.log(previousMessage)
-        let found = false;
-        for(let i=0; i<previousMessage.length; i++){
-          let prevMsg = previousMessage[i]
-          console.log(prevMsg)
-          console.log(prevMsg!.content, msg)
-          if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
-            console.log("true")
-            found = true;
+        // for(let i=0; i<message.length; i++){
+        //   let prevMsg = message[i]
+        //   console.log(prevMsg)
+        //   console.log(prevMsg!.content, msg)
+        //   if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+        //     console.log("true")
+        //   }
+        // }
+        setMessage((previousMessage: any) => {
+          console.log(previousMessage)
+          let found = false;
+          for(let i=0; i<previousMessage.length; i++){
+            let prevMsg = previousMessage[i]
+            console.log(prevMsg)
+            console.log(prevMsg!.content, msg)
+            if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+              console.log("true")
+              found = true;
+            }
           }
-        }
-        if(found){
-          return [
-            ...previousMessage
-          ];
-        }else{
-          return [
-            ...previousMessage,
-            {
-              content: msg,
-              role: "assistance",
-              sent_time: data.reply.createdAt,
-            },
-          ];
-        }
-      });
-      setTyping(false)
-      scrollToBottom();
-    }else{
-      setTyping(false)
-    }
+          if(found){
+            return [
+              ...previousMessage
+            ];
+          }else{
+            return [
+              ...previousMessage,
+              {
+                content: msg,
+                role: "assistance",
+                sent_time: data.reply.createdAt,
+              },
+            ];
+          }
+        });
+        setTyping(false)
+        scrollToBottom();
+      }else{
+        setTyping(false)
+      }
     }
 
     const emitMessage = (customerId: string, businessId: string) => {
