@@ -102,3 +102,39 @@ form {
 .display {
   visibility: visible;
 }
+
+#file-upload{
+  display: none;
+}
+
+.image_uploaded{
+  position: relative;
+}
+
+.image_uploaded > img{
+  width: 40px;
+  height: 37px;
+  margin-right: 8px;
+}
+
+.image_uploaded > div{
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background-color:#E9EBEF;
+  border-radius: 50%;
+  color: #374151;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  font-size: 13px;
+}
+
+.upload_image{
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+}
