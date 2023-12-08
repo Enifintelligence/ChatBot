@@ -22,7 +22,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     // let id = props.businessId
     let businessId = props.businessId
     // https://enif-business-production.up.railway.app
-    let serverUrl = import.meta.env.VITE_API_BASE_URL;
+    let serverUrl = "https://test.enif.ai";
     const [message, setMessage] = useState<any>([]);
     const [id, setId] = useState("");
     const [textMessage, setTextMessage] = useState("");
