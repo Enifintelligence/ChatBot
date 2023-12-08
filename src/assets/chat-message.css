@@ -73,6 +73,7 @@ h2 {
   outline: none;
   border: none;
   border-radius: 0;
+  font-family: BlinkMacSystemFont;
 }
 .message_icons_left {
   display: flex;
@@ -99,6 +100,25 @@ button {
   color: white;
   /* margin-bottom: 1rem; */
 }
+
+.send_button > button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2000F0;
+  color: white;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 6px 18.5px;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  /* background-color: #1a1a1a; */
+  cursor: pointer;
+  transition: border-color 0.25s;
+  /* margin-bottom: 1rem; */
+}
+
 .chat-box {
   display: flex;
   flex-direction: column;
@@ -113,6 +133,7 @@ button {
 .message {
   padding: 1.225rem;
   background: rgb(234 241 255);
+  font-family: BlinkMacSystemFont;
 }
 .message-box {
   max-width: 75%;
@@ -165,6 +186,7 @@ button {
   align-items: end;
   font-size: 14px;
   gap: 4px;
+  font-family: BlinkMacSystemFont;
 }
 .typing {
   align-items: flex-end;
