@@ -64,11 +64,27 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
       if(message.agentName)
       localStorage.setItem("agentName", message.agentName)
 
+      // axios
+      // .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/messages/${message.id}`)
+      // .then((response) => {
+      //   console.log(response.data);
+      //   props.setMessages(response.data?.data);
+      //   props.changeTab('message')
+      // })
+      // .catch((error) => {
+      //   // if (error instanceof AxiosError) {
+      //   //   const errMessage = error.response?.data?.message;
+      //   //   setError(errMessage);
+      //   // }
+      //   // setIsLoading(false);
+      // });
+
       axios
-      .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/messages/${message.id}`)
-      .then((response) => {
-        console.log(response.data);
-        props.setMessages(response.data?.data);
+      .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/all/user/${message.email}/${props.businessId}?ticketId=${message.id}`)
+      .then((res) => {
+        console.log(res.data);
+        props.setMessages(res.data?.data);
+
         props.changeTab('message')
       })
       .catch((error) => {
