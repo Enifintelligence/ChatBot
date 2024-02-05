@@ -225,7 +225,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
       setSocket(socket);
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
@@ -522,7 +522,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
       setSocket(socket);
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
