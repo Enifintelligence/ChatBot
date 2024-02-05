@@ -33,10 +33,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
     const fetchMessages = async (id: string) => {
       console.log("dfef")
         try {
-        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/conversation/${id}`
+        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/messages/${id}`
         axios({url: url, method: 'get' }).then(res => {
-            setCookie("email", res.data.email, 2)
-            formatMessages(res.data.messages)
+            // setCookie("email", res.data.email, 2)
+            formatMessages(res.data.data)
         })
         } catch (error: any) {}
     };
@@ -45,9 +45,10 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       console.log(props.messages)
       props.chatDetails.customer_email && setCookie("email", props.chatDetails.customer_email, 2);
       let id = getCookie('ticketId')
-      !props.messages && id && fetchMessages(id);
+      console.log(id)
+      id && fetchMessages(id);
       id && setId(id)
-      props.messages && formatMessages(props.messages)
+      props.messages && props.messages.length > 0 && formatMessages(props.messages)
 
       if(localStorage.getItem("agentName")){
         setAgentName(localStorage.getItem("agentName") as string)
