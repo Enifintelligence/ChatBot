@@ -29,7 +29,7 @@ const ChatBotModal:FC<ChatProps> = (props): JSX.Element =>{
                     <HomeTab changeTab={props.changeTab} />
                 }
                 {props.tabOpen === 'details' &&
-                    <Details businessId={props.businessId} setChatDetails={setChatDetails} changeTab={props.changeTab} />
+                    <Details businessId={props.businessId} setChatDetails={setChatDetails} setMessages={setMessages} changeTab={props.changeTab} />
                 }
                 {props.tabOpen === 'message' &&
                     <Message businessId={props.businessId} chatDetails={chatDetails} messages={messages} />

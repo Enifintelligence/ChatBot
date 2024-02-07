@@ -44,7 +44,7 @@ form {
 
   visibility: hidden;
 }
-form label {
+.input_box > label {
   color: #1a1a1b;
   font-size: 13px;
   line-height: 120%;
@@ -56,13 +56,19 @@ form label {
   overflow: clip;
 }
 
+.input_border > p{
+  font-size: 15px;
+  margin: 0;
+  font-family: BlinkMacSystemFont;
+}
+
 .check_img {
   position: absolute;
   background-color: black;
   padding: 0.5rem 0.6rem;
-  top: 51%;
+  top: 6px;
   width: 0.5rem;
-  translate: 0 -50%;
+  /* translate: 0 -50%; */
   right: 0%;
   border-radius: 0 6px 6px 0;
 }
@@ -76,7 +82,8 @@ form label {
   border-radius: 0 6px 6px 0;
   cursor: pointer;
 }
-form div input {
+.input_border > input {
+  border: none;
   font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   display: flex;
     -webkit-box-pack: justify;

@@ -10,6 +10,7 @@ interface ChatProps {
     changeTab: Function,
     setChatDetails: Function,
     businessId: string | undefined,
+    setMessages: Function,
 }
 
 // https://enif-business-production.up.railway.app
@@ -57,10 +58,31 @@ const Details:FC<ChatProps> = (props): JSX.Element =>{
           if(response.data.agentName)
           localStorage.setItem("agentName", response.data.agentName)
 
+
+
           props.changeTab('message')
           props.setChatDetails(data)
           setCookie("email", data.customer_email, 2)
           setCookie("ticketId", response.data.id, 2)
+
+          // axios
+          // .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/all/user/${data.customer_email}/${businessId}?ticketId=${response.data.id}`)
+          // .then((res) => {
+          //   console.log(res.data);
+          //   props.setMessages(res.data?.data);
+
+          //   props.changeTab('message')
+          //   props.setChatDetails(data)
+          //   setCookie("email", data.customer_email, 2)
+          //   setCookie("ticketId", response.data.id, 2)
+          // })
+          // .catch((error) => {
+          //   // if (error instanceof AxiosError) {
+          //   //   const errMessage = error.response?.data?.message;
+          //   //   setError(errMessage);
+          //   // }
+          //   // setIsLoading(false);
+          // });
         //   navigate("/message/" + business_id + "/" + chat_identifier);
         } catch (error: any) {}
     };

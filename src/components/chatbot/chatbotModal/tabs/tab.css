@@ -17,6 +17,7 @@
 }
 
 .help_question{
+    cursor: pointer;
     padding: 10px;
     background-color: #fff;
     color: #202124;
@@ -29,11 +30,14 @@
 }
 
 .help_question > h4{
+    font-family: BlinkMacSystemFont;
     font-size: 14px;
+    margin: 0;
 }
 
 .help_question > p{
     font-size: 10px;
+    font-family: BlinkMacSystemFont;
 }
 
 .help_answer{

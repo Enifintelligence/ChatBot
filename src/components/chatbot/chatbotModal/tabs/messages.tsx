@@ -21,7 +21,7 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
 
     useEffect(() => {
         let email = getCookie('email')
-        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/user/${email}`
+        let url = `${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/user/${email}?businessId=${props.businessId}`
         axios({url: url, method: 'get' }).then(res => {
             console.log(res.data)
             setMessages(res.data.ticket)
@@ -78,6 +78,22 @@ const Messages:FC<ChatProps> = (props): JSX.Element =>{
         // }
         // setIsLoading(false);
       });
+
+      // axios
+      // .get(`${serverUrl}${serverUrl[serverUrl.length-1] === "/" ? "": "/"}api/chat/all/user/${message.email}/${props.businessId}?ticketId=${message.id}`)
+      // .then((res) => {
+      //   console.log(res.data);
+      //   props.setMessages(res.data?.data);
+
+      //   props.changeTab('message')
+      // })
+      // .catch((error) => {
+      //   // if (error instanceof AxiosError) {
+      //   //   const errMessage = error.response?.data?.message;
+      //   //   setError(errMessage);
+      //   // }
+      //   // setIsLoading(false);
+      // });
     }
 
     return (
