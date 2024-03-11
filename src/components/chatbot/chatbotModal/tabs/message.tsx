@@ -288,7 +288,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       setImageURL("");
       setImage(null)
       setTimeout(() => {
-        setTyping(true)
+        // setTyping(true)
         scrollToBottom();
       }, 3000)
       // emitMessage(.name as string, id as string);
@@ -347,7 +347,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           handleResponse(response.data, ticketId);
         }, 5000)
       } catch (error: any) {
-        setTyping(true)
+        setTyping(false)
       }
     };
 
@@ -700,7 +700,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     </>
                 );
                 })}
-                {typing &&
+                {/* {typing &&
                   <div className="chat_bubble">
                     <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
                     <div className="typing">
@@ -709,7 +709,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                       <div className="dot"></div>
                     </div>
                   </div>
-                }
+                } */}
                 {businessTypingId === businessId && !typing &&
                   <div className="chat_bubble">
                     <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
