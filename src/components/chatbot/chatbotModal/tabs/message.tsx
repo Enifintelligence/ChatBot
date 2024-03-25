@@ -4,6 +4,7 @@ import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
 // import io from "socket.io-client";
 import axios from 'axios';
+import Rating from '../../Rating/Rating';
 // import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
 // import parse from 'html-dom-parser'
 interface ChatProps {
@@ -226,7 +227,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
       setSocket(socket);
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
@@ -523,7 +524,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
         // setEachConversation({ messages: [...eachConversation.messages, newMessage] });
       }
 
-      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      const socket = new WebSocket(`ws://${serverUrl.split("//")[1]}`, id);
       setSocket(socket);
       socket.addEventListener('open', (event) => {
         // WebSocket connection is open
@@ -721,6 +722,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                   </div>
                 }
             </div>
+            <Rating />
             {/* {.name && ( */}
                 <div className="message_box">
                 <div className="message_icons_left">
