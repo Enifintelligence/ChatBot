@@ -92,7 +92,7 @@ const SingleMessage = () => {
             })}
           </div>
 
-          {/* <div className="review_area">
+          <div className="review_area">
             <div className="img_box">
               <img src="/images/Logo.png" alt="" />
             </div>
@@ -117,7 +117,7 @@ const SingleMessage = () => {
                 />
               </div>
             </NavLink>
-          </div> */}
+          </div>
         </div>
         <Footer />
       </div>
