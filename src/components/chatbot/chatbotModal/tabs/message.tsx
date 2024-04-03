@@ -4,6 +4,7 @@ import '../../../../assets/single-message.css';
 import "../../../../assets/chat-message.css";
 // import io from "socket.io-client";
 import axios from 'axios';
+import Rating from '../../Rating/Rating';
 // import ReactHtmlParser, { processNodes, convertNodeToElement } from 'react-html-parser';
 // import parse from 'html-dom-parser'
 interface ChatProps {
@@ -288,7 +289,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
       setImageURL("");
       setImage(null)
       setTimeout(() => {
-        setTyping(true)
+        // setTyping(true)
         scrollToBottom();
       }, 3000)
       // emitMessage(.name as string, id as string);
@@ -347,7 +348,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
           handleResponse(response.data, ticketId);
         }, 5000)
       } catch (error: any) {
-        setTyping(true)
+        setTyping(false)
       }
     };
 
@@ -700,7 +701,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                     </>
                 );
                 })}
-                {typing &&
+                {/* {typing &&
                   <div className="chat_bubble">
                     <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
                     <div className="typing">
@@ -709,7 +710,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                       <div className="dot"></div>
                     </div>
                   </div>
-                }
+                } */}
                 {businessTypingId === businessId && !typing &&
                   <div className="chat_bubble">
                     <span style={{textTransform: "capitalize"}}>{agentName.length > 0 ? agentName : "Javis"}</span> is typing
@@ -721,6 +722,7 @@ const Message:FC<ChatProps> = (props): JSX.Element =>{
                   </div>
                 }
             </div>
+            <Rating />
             {/* {.name && ( */}
                 <div className="message_box">
                 <div className="message_icons_left">
