@@ -251,6 +251,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     socket.addEventListener("message", (event) => {
       // Handle incoming WebSocket messages
       console.log(event.data);
+      console.log("handleResponse", { event, data: event?.data });
       if (event.data) {
         let ticketId = getCookie("ticketId");
         let parseData = JSON.parse(event.data);
@@ -388,7 +389,6 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
   };
 
   const handleResponse = (data: any, ticketId: any) => {
-    console.log("handleResponse", { data });
     if (data?.replyMode === "supervised") {
       setTyping(false);
       return;
