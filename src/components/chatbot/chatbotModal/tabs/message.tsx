@@ -297,19 +297,20 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
         });
         scrollToBottom();
       };
-  
+
       const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
       setSocket(socket);
-  
+
       socket.addEventListener("open", (event) => {
         console.log("WebSocket connection opened:", event);
       });
-  
+
       socket.addEventListener("message", (event) => {
         console.log("Received WebSocket message:", event.data);
+        console.log("handleResponse", { event, data: event?.data });
         const ticketId = getCookie("ticketId");
         const parseData = JSON.parse(event.data);
-        
+
         switch (parseData.event) {
           case "newmessage":
             handleNewMessageEvent(parseData.data);
@@ -320,14 +321,16 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
             }, 2000);
             break;
           case "businessTyping":
-            setBusinessTypingId(parseData.data.typing ? parseData.data.businessId : "");
+            setBusinessTypingId(
+              parseData.data.typing ? parseData.data.businessId : ""
+            );
             scrollToBottom();
             break;
           default:
             break;
         }
       });
-  
+
       socket.addEventListener("close", (event) => {
         console.log("WebSocket connection closed:", event);
       });
@@ -335,8 +338,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
       console.error("WebSocket connection error:", error);
     }
   };
-  
-  
+
   const sendMessage = async () => {
     userTyping(false);
     let msg = textMessage.trim();
@@ -550,41 +552,49 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
 
   const handleResponse = (data: any, ticketId: any) => {
     console.log("handleResponse", { data });
-  
-    if (data?.replyMode === "supervised" || (data?.replyMode === "hybrid" && !data?.reply)) {
+
+    if (
+      data?.replyMode === "supervised" ||
+      (data?.replyMode === "hybrid" && !data?.reply)
+    ) {
       setTyping(false);
       return;
     }
-  
+
     if (data?.reply) {
       const { reply } = data;
-  
+
       localStorage.setItem("ticketId", reply.ticketId);
       setCookie("ticketId", reply.ticketId, 2);
-  
+
       if (!ticketId) {
         initConnection(reply.ticketId);
       } else {
         emitMessage(ticketId as string, businessId as string);
       }
-  
+
       let msg = reply.content.replace(/\n/g, "<br>");
-  
+
       const nameMatch = reply.content.match(/\[(.*?)\]/);
       const imageMatch = reply.content.match(/\((.*?)\)/);
-  
+
       if (nameMatch || imageMatch) {
         msg = msg.replace(/\[(.*?)\]/g, "<br>");
         const images = msg.match(/\((.*?)\)/g);
-  
+
         if (images) {
           for (let i = 0; i < images.length; i++) {
             const image = images[i];
             const exImage = image.match(/\((.*?)\)/);
             const imageSource = exImage[1];
-  
-            if (imageSource.endsWith(".jpg") || imageSource.endsWith(".png") || imageSource.endsWith(".jpeg") ||
-                imageSource.endsWith(".gif") || imageSource.endsWith(".webp")) {
+
+            if (
+              imageSource.endsWith(".jpg") ||
+              imageSource.endsWith(".png") ||
+              imageSource.endsWith(".jpeg") ||
+              imageSource.endsWith(".gif") ||
+              imageSource.endsWith(".webp")
+            ) {
               msg = msg.replace(
                 exImage[0],
                 `<br><img className="" src="${imageSource}" alt="product image" />`
@@ -598,12 +608,13 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           }
         }
       }
-  
+
       setMessage((previousMessage: any) => {
-        const found = previousMessage.some((prevMsg: any) =>
-          prevMsg.sent_time === reply.createdAt && prevMsg.content === msg
+        const found = previousMessage.some(
+          (prevMsg: any) =>
+            prevMsg.sent_time === reply.createdAt && prevMsg.content === msg
         );
-  
+
         if (found) {
           return [...previousMessage];
         } else {
@@ -613,14 +624,14 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           ];
         }
       });
-  
+
       setTyping(false);
       scrollToBottom();
     } else {
       setTyping(false);
     }
   };
-  
+
   const emitMessage = (customerId: string, businessId: string) => {
     console.log(customerId, businessId);
     // socket.emit("message", {
