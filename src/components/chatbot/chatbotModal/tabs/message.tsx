@@ -183,7 +183,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
   //     }
   // }, [.name]);
 
-  const initConnection = async (id: string) => {
+  /*const initConnection = async (id: string) => {
     // const newSocket = io(serverUrl, {
     //   extraHeaders: {
     //     Authorization: `${id}`,
@@ -281,8 +281,62 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     socket.addEventListener("close", (event) => {
       // WebSocket connection is closed
     });
-  };
+  };*/
 
+  const initConnection = async (id: string) => {
+    try {
+      const handleNewMessageEvent = (data: any) => {
+        console.log("handleNewMessageEvent", { data });
+        let newMessage = {
+          content: data?.reply.content,
+          sender: "assistance",
+          sent_time: data?.reply.created_date,
+        };
+        setMessage((previousMessages: any) => {
+          return [...previousMessages, newMessage];
+        });
+        scrollToBottom();
+      };
+  
+      const socket = new WebSocket(`wss://${serverUrl.split("//")[1]}`, id);
+      setSocket(socket);
+  
+      socket.addEventListener("open", (event) => {
+        console.log("WebSocket connection opened:", event);
+      });
+  
+      socket.addEventListener("message", (event) => {
+        console.log("Received WebSocket message:", event.data);
+        const ticketId = getCookie("ticketId");
+        const parseData = JSON.parse(event.data);
+        
+        switch (parseData.event) {
+          case "newmessage":
+            handleNewMessageEvent(parseData.data);
+            break;
+          case "responseMessage":
+            setTimeout(() => {
+              handleResponse(parseData.data, ticketId);
+            }, 2000);
+            break;
+          case "businessTyping":
+            setBusinessTypingId(parseData.data.typing ? parseData.data.businessId : "");
+            scrollToBottom();
+            break;
+          default:
+            break;
+        }
+      });
+  
+      socket.addEventListener("close", (event) => {
+        console.log("WebSocket connection closed:", event);
+      });
+    } catch (error) {
+      console.error("WebSocket connection error:", error);
+    }
+  };
+  
+  
   const sendMessage = async () => {
     userTyping(false);
     let msg = textMessage.trim();
