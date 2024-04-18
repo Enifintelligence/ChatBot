@@ -205,9 +205,9 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     // newSocket.on("newmessage", (data) => {
     //   console.log(data)
     //   let newMessage = {
-    //       content: data.reply.content,
+    //       content: data?.reply.content,
     //       sender: "assistance",
-    //       sent_time: data.reply.created_date,
+    //       sent_time: data?.reply.created_date,
     //   };
     //   setMessage((previousMessages: any) => {
     //   return [...previousMessages, newMessage];
@@ -229,10 +229,11 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
 
     const handleNewMessageEvent = (data: any) => {
       //   console.log(data)
+      console.log("handleNewMessageEvent", { data });
       let newMessage = {
-        content: data.reply.content,
+        content: data?.reply.content,
         sender: "assistance",
-        sent_time: data.reply.created_date,
+        sent_time: data?.reply.created_date,
       };
       setMessage((previousMessages: any) => {
         return [...previousMessages, newMessage];
@@ -389,16 +390,17 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
   };
 
   const handleResponse = (data: any, ticketId: any) => {
+    console.log("handleResponse", { data });
     if (data?.replyMode === "supervised") {
       setTyping(false);
       return;
-    } else if (data?.replyMode === "hybrid" && !data.reply) {
+    } else if (data?.replyMode === "hybrid" && !data?.reply) {
       setTyping(false);
       return;
     }
 
     // setTyping(true)
-    if (data.reply) {
+    if (data?.reply) {
       localStorage.setItem("ticketId", data.ticketId);
       setCookie("ticketId", data.ticketId, 2);
       if (!ticketId) {
@@ -406,11 +408,11 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
       } else {
         emitMessage(ticketId as string, businessId as string);
       }
-      console.log(data.reply.content.split("\n"));
+      console.log(data?.reply.content.split("\n"));
 
-      let msg = data.reply.content;
-      let name = data.reply.content.match(/\[(.*?)\]/);
-      let image = data.reply.content.match(/\((.*?)\)/);
+      let msg = data?.reply.content;
+      let name = data?.reply.content.match(/\[(.*?)\]/);
+      let image = data?.reply.content.match(/\((.*?)\)/);
 
       if (name || image) {
         msg = msg.replace(/\[(.*?)\]/g, "<br>");
@@ -451,7 +453,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
       //   let prevMsg = message[i]
       //   console.log(prevMsg)
       //   console.log(prevMsg!.content, msg)
-      //   if(prevMsg.sent_time === data.reply.createdAt && prevMsg!.content === msg){
+      //   if(prevMsg.sent_time === data?.reply.createdAt && prevMsg!.content === msg){
       //     console.log("true")
       //   }
       // }
@@ -463,7 +465,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           console.log(prevMsg);
           console.log(prevMsg!.content, msg);
           if (
-            prevMsg.sent_time === data.reply.createdAt &&
+            prevMsg.sent_time === data?.reply.createdAt &&
             prevMsg!.content === msg
           ) {
             console.log("true");
@@ -478,7 +480,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
             {
               content: msg,
               role: "assistance",
-              sent_time: data.reply.createdAt,
+              sent_time: data?.reply.createdAt,
             },
           ];
         }
@@ -524,9 +526,9 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     //   newSocket.on("newmessage", (data) => {
     //       console.log(data)
     //       let newMessage = {
-    //           content: data.reply.content,
+    //           content: data?.reply.content,
     //           role: "assistance",
-    //           sent_time: data.reply.created_date,
+    //           sent_time: data?.reply.created_date,
     //       };
     //       setMessage((previousMessages: any) => {
     //       return [...previousMessages, newMessage];
@@ -553,9 +555,9 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     const handleNewMessageEvent = (data: any) => {
       //   console.log(data)
       let newMessage = {
-        content: data.reply.content,
+        content: data?.reply.content,
         role: "assistance",
-        sent_time: data.reply.created_date,
+        sent_time: data?.reply.created_date,
       };
       setMessage((previousMessages: any) => {
         return [...previousMessages, newMessage];
