@@ -391,7 +391,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     }, 10);
   };
 
-  const handleResponse = (data: any, ticketId: any) => {
+  /*const handleResponse = (data: any, ticketId: any) => {
     console.log("handleResponse", { data });
     if (data?.replyMode === "supervised") {
       setTyping(false);
@@ -492,8 +492,81 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     } else {
       setTyping(false);
     }
-  };
+  };*/
 
+  const handleResponse = (data: any, ticketId: any) => {
+    console.log("handleResponse", { data });
+  
+    if (data?.replyMode === "supervised" || (data?.replyMode === "hybrid" && !data?.reply)) {
+      setTyping(false);
+      return;
+    }
+  
+    if (data?.reply) {
+      const { reply } = data;
+  
+      localStorage.setItem("ticketId", reply.ticketId);
+      setCookie("ticketId", reply.ticketId, 2);
+  
+      if (!ticketId) {
+        initConnection(reply.ticketId);
+      } else {
+        emitMessage(ticketId as string, businessId as string);
+      }
+  
+      let msg = reply.content.replace(/\n/g, "<br>");
+  
+      const nameMatch = reply.content.match(/\[(.*?)\]/);
+      const imageMatch = reply.content.match(/\((.*?)\)/);
+  
+      if (nameMatch || imageMatch) {
+        msg = msg.replace(/\[(.*?)\]/g, "<br>");
+        const images = msg.match(/\((.*?)\)/g);
+  
+        if (images) {
+          for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            const exImage = image.match(/\((.*?)\)/);
+            const imageSource = exImage[1];
+  
+            if (imageSource.endsWith(".jpg") || imageSource.endsWith(".png") || imageSource.endsWith(".jpeg") ||
+                imageSource.endsWith(".gif") || imageSource.endsWith(".webp")) {
+              msg = msg.replace(
+                exImage[0],
+                `<br><img className="" src="${imageSource}" alt="product image" />`
+              );
+            } else if (imageSource.startsWith("http")) {
+              msg = msg.replace(
+                exImage[0],
+                `<a className="" href="${imageSource}" target='_blank' >Link</a> <br>`
+              );
+            }
+          }
+        }
+      }
+  
+      setMessage((previousMessage: any) => {
+        const found = previousMessage.some((prevMsg: any) =>
+          prevMsg.sent_time === reply.createdAt && prevMsg.content === msg
+        );
+  
+        if (found) {
+          return [...previousMessage];
+        } else {
+          return [
+            ...previousMessage,
+            { content: msg, role: "assistance", sent_time: reply.createdAt },
+          ];
+        }
+      });
+  
+      setTyping(false);
+      scrollToBottom();
+    } else {
+      setTyping(false);
+    }
+  };
+  
   const emitMessage = (customerId: string, businessId: string) => {
     console.log(customerId, businessId);
     // socket.emit("message", {
