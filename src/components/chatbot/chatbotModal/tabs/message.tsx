@@ -339,7 +339,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     }
   };
 
-  const sendMessage = async () => {
+  /*const sendMessage = async () => {
     userTyping(false);
     let msg = textMessage.trim();
     let imageMsg;
@@ -436,7 +436,106 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     } catch (error: any) {
       setTyping(false);
     }
+  };*/
+
+  const sendMessage = async () => {
+    try {
+      userTyping(false);
+  
+      let msg = textMessage.trim();
+      let imageMsg = "";
+  
+      if (image) {
+        const formData = new FormData();
+        formData.append("images", image);
+        const imageRes = await imageUpload(formData);
+        console.log(imageRes);
+        imageMsg = imageRes.data[0];
+        msg += ` (${imageMsg})`;
+      }
+  
+      console.log(msg);
+  
+      if (msg.length <= 0) {
+        return;
+      }
+  
+      if (props.chatDetails.customer_email) {
+        setCookie("email", props.chatDetails.customer_email, 2);
+      }
+  
+      setTextMessage("");
+      setImageURL("");
+      setImage(null);
+  
+      setTimeout(() => {
+        scrollToBottom();
+      }, 3000);
+  
+      let text = msg;
+      let imageMatch = msg.match(/\((.*?)\)/);
+  
+      if (imageMatch) {
+        text = text.replace(/\[(.*?)\]/g, "<br>");
+        let imageSource = imageMatch[1];
+  
+        if (
+          imageSource.endsWith(".jpg") ||
+          imageSource.endsWith(".png") ||
+          imageSource.endsWith(".jpeg") ||
+          imageSource.endsWith(".gif") ||
+          imageSource.endsWith(".webp")
+        ) {
+          text = text.replace(
+            imageMatch[0],
+            `<br><img className="" src="${imageSource}" alt="product image" />`
+          );
+        } else if (imageSource.startsWith("http")) {
+          text = text.replace(
+            imageMatch[0],
+            `<a className="" href="${imageSource}" target='_blank' >Link</a> <br>`
+          );
+        }
+      }
+  
+      setMessage((previousMessage: any) => {
+        return [
+          ...previousMessage,
+          {
+            content: text,
+            role: "user",
+            sent_time: new Date(),
+          },
+        ];
+      });
+  
+      scrollToBottom();
+  
+      setTimeout(async () => {
+        let ticketId = getCookie("ticketId");
+        let email = getCookie("email");
+        let data: any = {
+          businessId: businessId,
+          channel: "chat",
+          customer: props.chatDetails.name,
+          email: email,
+          promptMsg: msg,
+        };
+  
+        if (ticketId) {
+          data["ticketId"] = ticketId;
+        }
+  
+        let url = `${serverUrl}${serverUrl.endsWith("/") ? "" : "/"}api/chat/send`;
+        let response = await axios.post(url, data);
+        handleResponse(response.data, ticketId);
+      }, 5000);
+    } catch (error: any) {
+      console.error("Error sending message:", error);
+      setTyping(false);
+    }
   };
+  
 
   const scrollToBottom = () => {
     setTimeout(() => {
