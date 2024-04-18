@@ -41,7 +41,9 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
         // setCookie("email", res.data.email, 2)
         formatMessages(res.data.data);
       });
-    } catch (error: any) {}
+    } catch (error: any) {
+      console.log("fetch messages errors", { error });
+    }
   };
 
   useEffect(() => {
