@@ -72,7 +72,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     }
   }, [id]);
 
-  const formatMessages = (messages: any) => {
+  /*const formatMessages = (messages: any) => {
     let prevMessages = [];
     for (let i = 0; i < messages.length; i++) {
       let message = messages[i];
@@ -137,6 +137,61 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
     }
     setMessage(prevMessages);
     scrollToBottom();
+  };*/
+
+  const formatMessages = (messages: any) => {
+    const formattedMessages = messages
+      .filter((message: any) => message.status !== "draft")
+      .map((message: any) => ({
+        content: formatMessageContent(message.content),
+        role: message.role === "user" ? "user" : "assistance",
+        sent_time: message.created_date,
+      }));
+
+    setMessage(formattedMessages);
+    scrollToBottom();
+  };
+
+  const formatMessageContent = (content: string) => {
+    let formattedContent = content.replace(/\n/g, "<br>");
+    const nameMatch = content.match(/\[(.*?)\]/);
+    const imageMatch = content.match(/\((.*?)\)/);
+
+    if (nameMatch || imageMatch) {
+      formattedContent = formattedContent.replace(/\[(.*?)\]/g, "<br>");
+      const images = formattedContent.match(/\((.*?)\)/g);
+
+      if (images) {
+        for (let i = 0; i < images.length; i++) {
+          const image = images[i];
+          const exImage = image.match(/\((.*?)\)/);
+          const imageSource = exImage && exImage[1]; // Add null check here
+
+          if (imageSource) {
+            // Add null check here
+            if (
+              imageSource.endsWith(".jpg") ||
+              imageSource.endsWith(".png") ||
+              imageSource.endsWith(".jpeg") ||
+              imageSource.endsWith(".gif") ||
+              imageSource.endsWith(".webp")
+            ) {
+              formattedContent = formattedContent.replace(
+                exImage[0],
+                `<br><img className="" src="${imageSource}" alt="product image" />`
+              );
+            } else if (imageSource.startsWith("http")) {
+              formattedContent = formattedContent.replace(
+                exImage[0],
+                `<a className="" href="${imageSource}" target='_blank' >Link</a> <br>`
+              );
+            }
+          }
+        }
+      }
+    }
+
+    return formattedContent;
   };
 
   // useEffect(() => {
@@ -441,10 +496,10 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
   const sendMessage = async () => {
     try {
       userTyping(false);
-  
+
       let msg = textMessage.trim();
       let imageMsg = "";
-  
+
       if (image) {
         const formData = new FormData();
         formData.append("images", image);
@@ -453,32 +508,32 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
         imageMsg = imageRes.data[0];
         msg += ` (${imageMsg})`;
       }
-  
+
       console.log(msg);
-  
+
       if (msg.length <= 0) {
         return;
       }
-  
+
       if (props.chatDetails.customer_email) {
         setCookie("email", props.chatDetails.customer_email, 2);
       }
-  
+
       setTextMessage("");
       setImageURL("");
       setImage(null);
-  
+
       setTimeout(() => {
         scrollToBottom();
       }, 3000);
-  
+
       let text = msg;
       let imageMatch = msg.match(/\((.*?)\)/);
-  
+
       if (imageMatch) {
         text = text.replace(/\[(.*?)\]/g, "<br>");
         let imageSource = imageMatch[1];
-  
+
         if (
           imageSource.endsWith(".jpg") ||
           imageSource.endsWith(".png") ||
@@ -497,7 +552,7 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           );
         }
       }
-  
+
       setMessage((previousMessage: any) => {
         return [
           ...previousMessage,
@@ -508,9 +563,9 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           },
         ];
       });
-  
+
       scrollToBottom();
-  
+
       setTimeout(async () => {
         let ticketId = getCookie("ticketId");
         let email = getCookie("email");
@@ -521,12 +576,14 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
           email: email,
           promptMsg: msg,
         };
-  
+
         if (ticketId) {
           data["ticketId"] = ticketId;
         }
-  
-        let url = `${serverUrl}${serverUrl.endsWith("/") ? "" : "/"}api/chat/send`;
+
+        let url = `${serverUrl}${
+          serverUrl.endsWith("/") ? "" : "/"
+        }api/chat/send`;
         let response = await axios.post(url, data);
         handleResponse(response.data, ticketId);
       }, 5000);
@@ -535,7 +592,6 @@ const Message: FC<ChatProps> = (props): JSX.Element => {
       setTyping(false);
     }
   };
-  
 
   const scrollToBottom = () => {
     setTimeout(() => {
